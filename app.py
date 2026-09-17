@@ -81,7 +81,7 @@ def home():
                 <div class="lg:col-span-5 glass p-6 rounded-3xl shadow-sm border border-white/60 space-y-5">
                     <div class="flex justify-between items-center">
                         <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Thông Số Đầu Vào</h2>
-                        <span class="text-[10px] px-2 py-0.5 bg-teal-100 text-teal-700 rounded-full font-semibold">Tự động cập nhật</span>
+                        <span class="text-[10px] px-2 py-0.5 bg-teal-100 text-teal-700 rounded-full font-semibold">Tùy chỉnh</span>
                     </div>
 
                     <div class="grid grid-cols-3 gap-2">
@@ -120,6 +120,10 @@ def home():
                             <input type="range" min="0.1" max="2.5" step="0.1" id="pw" value="0.2" oninput="onInputChange()" class="w-full accent-teal-600">
                         </div>
                     </div>
+
+                    <button onclick="triggerPredict()" class="w-full py-3 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold rounded-2xl shadow-lg shadow-teal-500/20 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 text-sm">
+                        <span>🔍</span> Phân Tích & Dự Đoán
+                    </button>
 
                     <div id="anomalyAlert" class="hidden p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs flex items-center gap-2">
                         <span>⚠️</span> <span>Thông số ngoại lệ: Hình dạng đài/cánh bất thường so với tự nhiên.</span>
@@ -193,7 +197,6 @@ def home():
             let currentRes = {};
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-            // Play Subtle UI Sound
             function playBeep() {
                 try {
                     const osc = audioCtx.createOscillator();
@@ -208,7 +211,6 @@ def home():
             }
 
             function initCharts() {
-                // Radar Chart Setup
                 const ctxRadar = document.getElementById('radarChart').getContext('2d');
                 radarChart = new Chart(ctxRadar, {
                     type: 'radar',
@@ -222,7 +224,6 @@ def home():
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                 });
 
-                // Scatter Chart Setup
                 const ctxScatter = document.getElementById('scatterChart').getContext('2d');
                 scatterChart = new Chart(ctxScatter, {
                     type: 'scatter',
@@ -252,9 +253,9 @@ def home():
                 document.getElementById('pl').value = pl;
                 document.getElementById('pw').value = pw;
                 onInputChange();
+                triggerPredict();
             }
 
-            let debounceTimer;
             function onInputChange() {
                 playBeep();
                 const sl = parseFloat(document.getElementById('sl').value);
@@ -267,16 +268,20 @@ def home():
                 document.getElementById('v_pl').textContent = pl + ' cm';
                 document.getElementById('v_pw').textContent = pw + ' cm';
 
-                // Check anomaly
                 const anomaly = document.getElementById('anomalyAlert');
                 if (pw > sw || pl > sl * 1.2) {
                     anomaly.classList.remove('hidden');
                 } else {
                     anomaly.classList.add('hidden');
                 }
+            }
 
-                clearTimeout(debounceTimer);
-                debounceTimer = setTimeout(() => requestPrediction(sl, sw, pl, pw), 200);
+            function triggerPredict() {
+                const sl = parseFloat(document.getElementById('sl').value);
+                const sw = parseFloat(document.getElementById('sw').value);
+                const pl = parseFloat(document.getElementById('pl').value);
+                const pw = parseFloat(document.getElementById('pw').value);
+                requestPrediction(sl, sw, pl, pw);
             }
 
             async function requestPrediction(sl, sw, pl, pw) {
@@ -288,25 +293,21 @@ def home():
                 const data = await res.json();
                 currentRes = data;
 
-                // Update UI Banner
                 document.getElementById('resIcon').textContent = data.icon;
                 document.getElementById('resName').textContent = data.prediction;
                 document.getElementById('resName').style.color = data.color;
                 document.getElementById('resDesc').textContent = data.desc;
                 document.getElementById('resTips').textContent = data.tips;
 
-                // Update Radar Chart
                 radarChart.data.datasets[0].data = [sl, sw, pl, pw];
                 radarChart.data.datasets[1].data = data.avg;
                 radarChart.data.datasets[1].borderColor = data.color;
                 radarChart.update();
 
-                // Update Scatter Chart
                 scatterChart.data.datasets[0].data = [{ x: pl, y: pw }];
                 scatterChart.data.datasets[0].backgroundColor = data.color;
                 scatterChart.update();
 
-                // Add to history
                 const probPercent = (Math.max(...data.probabilities) * 100).toFixed(1) + '%';
                 historyLog.unshift({
                     name: `${data.icon} ${data.prediction}`,
@@ -351,6 +352,7 @@ def home():
             window.onload = () => {
                 initCharts();
                 onInputChange();
+                triggerPredict();
             };
         </script>
     </body>
