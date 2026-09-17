@@ -17,21 +17,21 @@ SPECIES_MAP = {
         "icon": "🪻",
         "color": "#8B5CF6",
         "desc": "Cánh hoa ngắn, đài hoa rộng",
-        "care_tips": "🌱 **Thổ nhưỡng & Ánh sáng:** Ưa ẩm mát, phát triển tốt ở vùng bán râm hoặc nắng nhẹ. Cần đất ẩm nhiều mùn, chịu được ngập nhẹ."
+        "care_tips": "🌱 **Thổ nhưỡng & Ánh sáng:** Ưa đất khô, tơi xốp và thoát nước tốt, không chịu được ngập úng. Phát triển tốt ở nơi nắng đầy đủ, cần nhiều ánh sáng.."
     },
     1: {
         "name": "Iris-versicolor",
         "icon": "🌺",
         "color": "#EC4899",
         "desc": "Kích thước trung bình, màu sắc sặc sỡ",
-        "care_tips": "💧 **Thổ nhưỡng & Ánh sáng:** Rất ưa nước và ánh nắng trực tiếp. Thích hợp trồng ở bờ hồ, đầm lầy hoặc vùng đất sét giữ nước tốt."
+        "care_tips": "💧 **Thổ nhưỡng & Ánh sáng:** Ưa đất giàu dinh dưỡng, tơi xốp và thoát nước tốt, độ ẩm vừa phải. Thích ánh sáng nhẹ đến đầy đủ, tránh nắng quá gắt trong thời tiết nóng."
     },
     2: {
         "name": "Iris-virginica",
         "icon": "🪷",
         "color": "#3B82F6",
         "desc": "Cánh hoa dài & rộng, kích thước lớn nhất",
-        "care_tips": "☀️ **Thổ nhưỡng & Ánh sáng:** Cần nhiều ánh nắng mặt trời đầy đủ (6-8h/ngày). Ưa đất xốp giàu hữu cơ, độ ẩm cao nhưng thoát nước linh hoạt."
+        "care_tips": "☀️ **Thổ nhưỡng & Ánh sáng:** Ưa đất ẩm, nhiều mùn và giàu dinh dưỡng, có khả năng chịu ngập nước. Phát triển tốt ở nơi nhiều ánh sáng và nắng trực tiếp."
     }
 }
 
