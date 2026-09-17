@@ -228,6 +228,51 @@ def home():
                 </div>
             </div>
 
+            <div class="glass-card p-5 rounded-3xl shadow-xl space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold flex items-center gap-2">
+                        <span>📊</span> Khoảng giá trị đặc trưng của các loài Iris (Min - Max cm)
+                    </h3>
+                    <span class="text-[10px] text-slate-400">Dữ liệu chuẩn Dataset Iris</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
+                        <thead class="bg-slate-100/50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 font-semibold uppercase">
+                            <tr>
+                                <th class="p-2.5 rounded-l-xl">Loài hoa</th>
+                                <th class="p-2.5">Đài dài (Sepal L)</th>
+                                <th class="p-2.5">Đài rộng (Sepal W)</th>
+                                <th class="p-2.5">Cánh dài (Petal L)</th>
+                                <th class="p-2.5 rounded-r-xl">Cánh rộng (Petal W)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200/40 dark:divide-slate-700/40 font-medium">
+                            <tr class="hover:bg-slate-100/40 dark:hover:bg-slate-700/30 transition">
+                                <td class="p-2.5 font-bold text-purple-600 dark:text-purple-400">🪻 Iris-setosa</td>
+                                <td class="p-2.5">4.3 – 5.8 cm</td>
+                                <td class="p-2.5">2.3 – 4.4 cm</td>
+                                <td class="p-2.5">1.0 – 1.9 cm</td>
+                                <td class="p-2.5">0.1 – 0.6 cm</td>
+                            </tr>
+                            <tr class="hover:bg-slate-100/40 dark:hover:bg-slate-700/30 transition">
+                                <td class="p-2.5 font-bold text-pink-600 dark:text-pink-400">🌺 Iris-versicolor</td>
+                                <td class="p-2.5">4.9 – 7.0 cm</td>
+                                <td class="p-2.5">2.0 – 3.4 cm</td>
+                                <td class="p-2.5">3.0 – 5.1 cm</td>
+                                <td class="p-2.5">1.0 – 1.8 cm</td>
+                            </tr>
+                            <tr class="hover:bg-slate-100/40 dark:hover:bg-slate-700/30 transition">
+                                <td class="p-2.5 font-bold text-blue-600 dark:text-blue-400">🪷 Iris-virginica</td>
+                                <td class="p-2.5">4.9 – 7.9 cm</td>
+                                <td class="p-2.5">2.2 – 3.8 cm</td>
+                                <td class="p-2.5">4.5 – 6.9 cm</td>
+                                <td class="p-2.5">1.4 – 2.5 cm</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="glass-card p-5 rounded-3xl shadow-xl">
                 <div class="flex justify-between items-center mb-3">
                     <h3 class="text-sm font-bold flex items-center gap-2">
@@ -355,7 +400,7 @@ def home():
                 // Hiển thị Mẹo chăm sóc sinh học (Botanic Care Tips)
                 if (data.care_tips) {
                     document.getElementById('careBox').classList.remove('hidden');
-                    document.getElementById('careTipsText').innerHTML = data.care_tips.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+                    document.getElementById('careTipsText').innerHTML = data.care_tips.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 }
 
                 // Cập nhật xác suất
