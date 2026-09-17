@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import joblib
 
-app = FastAPI(title="Iris Botanical Lab")
+app = FastAPI(title="Iris AI Botanical Lab")
 
 try:
     model = joblib.load("svm_model.pkl")
@@ -51,7 +51,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iris Studio - Botanical Analytics</title>
+        <title>Iris AI Studio - Botanical Analytics</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
@@ -67,7 +67,7 @@ def home():
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-md">🌿</div>
                     <div>
-                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Botanical Lab</h1>
+                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Botanical AI Lab</h1>
                         <p class="text-xs text-slate-500">Phân tích & Nhận diện loài hoa Iris đa chiều</p>
                     </div>
                 </div>
