@@ -213,9 +213,14 @@ def home():
             </div>
 
             <div class="glass-card p-5 rounded-3xl shadow-xl">
-                <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
-                    <span>📜</span> Lịch sử dự đoán gần đây
-                </h3>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-bold flex items-center gap-2">
+                        <span>📜</span> Lịch sử dự đoán gần đây
+                    </h3>
+                    <button onclick="clearHistory()" class="px-3 py-1 glass-btn hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-xs rounded-xl font-semibold transition shadow-sm hover:shadow active:scale-95 flex items-center gap-1">
+                        🗑️ Xóa lịch sử
+                    </button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-xs text-slate-600 dark:text-slate-300">
                         <thead class="bg-slate-100/50 dark:bg-slate-900/50 text-slate-700 dark:text-slate-300 font-semibold uppercase">
@@ -349,8 +354,17 @@ def home():
                 renderHistory();
             });
 
+            function clearHistory() {
+                historyData = [];
+                renderHistory();
+            }
+
             function renderHistory() {
                 const tbody = document.getElementById('historyTable');
+                if (historyData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-slate-400">Chưa có lịch sử dự đoán</td></tr>';
+                    return;
+                }
                 tbody.innerHTML = historyData.map(item => `
                     <tr class="hover:bg-slate-100/40 dark:hover:bg-slate-700/30 transition">
                         <td class="p-2.5 font-bold">${item.icon} ${item.name}</td>
