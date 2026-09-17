@@ -119,7 +119,11 @@ def home():
                                     <span>Chiều dài đài hoa (Sepal Length)</span>
                                     <span id="sl_val" class="text-emerald-600 dark:text-emerald-400 font-bold">5.1 cm</span>
                                 </div>
-                                <input type="range" min="4.0" max="8.0" step="0.1" id="sepal_length" value="5.1" oninput="updateUI()" class="w-full accent-emerald-600">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="adjustValue('sepal_length', -0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">◀</button>
+                                    <input type="range" min="4.0" max="8.0" step="0.1" id="sepal_length" value="5.1" oninput="updateUI()" class="w-full accent-emerald-600">
+                                    <button type="button" onclick="adjustValue('sepal_length', 0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">▶</button>
+                                </div>
                             </div>
 
                             <div>
@@ -127,7 +131,11 @@ def home():
                                     <span>Chiều rộng đài hoa (Sepal Width)</span>
                                     <span id="sw_val" class="text-emerald-600 dark:text-emerald-400 font-bold">3.5 cm</span>
                                 </div>
-                                <input type="range" min="2.0" max="4.5" step="0.1" id="sepal_width" value="3.5" oninput="updateUI()" class="w-full accent-emerald-600">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="adjustValue('sepal_width', -0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">◀</button>
+                                    <input type="range" min="2.0" max="4.5" step="0.1" id="sepal_width" value="3.5" oninput="updateUI()" class="w-full accent-emerald-600">
+                                    <button type="button" onclick="adjustValue('sepal_width', 0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">▶</button>
+                                </div>
                             </div>
 
                             <div>
@@ -135,7 +143,11 @@ def home():
                                     <span>Chiều dài cánh hoa (Petal Length)</span>
                                     <span id="pl_val" class="text-emerald-600 dark:text-emerald-400 font-bold">1.4 cm</span>
                                 </div>
-                                <input type="range" min="1.0" max="7.0" step="0.1" id="petal_length" value="1.4" oninput="updateUI()" class="w-full accent-emerald-600">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="adjustValue('petal_length', -0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">◀</button>
+                                    <input type="range" min="1.0" max="7.0" step="0.1" id="petal_length" value="1.4" oninput="updateUI()" class="w-full accent-emerald-600">
+                                    <button type="button" onclick="adjustValue('petal_length', 0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">▶</button>
+                                </div>
                             </div>
 
                             <div>
@@ -143,7 +155,11 @@ def home():
                                     <span>Chiều rộng cánh hoa (Petal Width)</span>
                                     <span id="pw_val" class="text-emerald-600 dark:text-emerald-400 font-bold">0.2 cm</span>
                                 </div>
-                                <input type="range" min="0.1" max="2.5" step="0.1" id="petal_width" value="0.2" oninput="updateUI()" class="w-full accent-emerald-600">
+                                <div class="flex items-center gap-2">
+                                    <button type="button" onclick="adjustValue('petal_width', -0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">◀</button>
+                                    <input type="range" min="0.1" max="2.5" step="0.1" id="petal_width" value="0.2" oninput="updateUI()" class="w-full accent-emerald-600">
+                                    <button type="button" onclick="adjustValue('petal_width', 0.1)" class="w-8 h-8 glass-btn hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl font-extrabold flex items-center justify-center transition active:scale-90 shadow-sm">▶</button>
+                                </div>
                             </div>
                         </div>
 
@@ -254,6 +270,17 @@ def home():
                 }
             }
 
+            function adjustValue(inputId, step) {
+                const input = document.getElementById(inputId);
+                let val = parseFloat(input.value) + step;
+                const min = parseFloat(input.min);
+                const max = parseFloat(input.max);
+                
+                val = Math.min(Math.max(val, min), max);
+                input.value = val.toFixed(1);
+                updateUI();
+            }
+
             function applyPreset(sl, sw, pl, pw) {
                 document.getElementById('sepal_length').value = sl;
                 document.getElementById('sepal_width').value = sw;
@@ -268,10 +295,10 @@ def home():
                 const pl = parseFloat(document.getElementById('petal_length').value);
                 const pw = parseFloat(document.getElementById('petal_width').value);
 
-                document.getElementById('sl_val').textContent = sl + ' cm';
-                document.getElementById('sw_val').textContent = sw + ' cm';
-                document.getElementById('pl_val').textContent = pl + ' cm';
-                document.getElementById('pw_val').textContent = pw + ' cm';
+                document.getElementById('sl_val').textContent = sl.toFixed(1) + ' cm';
+                document.getElementById('sw_val').textContent = sw.toFixed(1) + ' cm';
+                document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
+                document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
 
                 // Cập nhật kích thước SVG
                 document.getElementById('svgSepal').setAttribute('ry', sl * 5.5);
