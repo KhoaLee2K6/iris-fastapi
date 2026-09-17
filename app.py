@@ -3,18 +3,38 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import joblib
 
-app = FastAPI(title="Iris Creative Classifier")
+app = FastAPI(title="Iris Botanical Lab")
 
-# Load model SVM
 try:
     model = joblib.load("svm_model.pkl")
 except Exception:
     model = None
 
 SPECIES_MAP = {
-    0: {"name": "Iris-setosa", "icon": "🪻", "color": "#8B5CF6", "desc": "Cánh hoa ngắn, đài hoa rộng"},
-    1: {"name": "Iris-versicolor", "icon": "🌺", "color": "#EC4899", "desc": "Kích thước trung bình, màu sắc sặc sỡ"},
-    2: {"name": "Iris-virginica", "icon": "🪷", "color": "#3B82F6", "desc": "Cánh hoa dài & rộng, kích thước lớn nhất"}
+    0: {
+        "name": "Iris-setosa",
+        "icon": "🪻",
+        "color": "#8B5CF6",
+        "desc": "Cánh hoa ngắn, đài hoa rộng đặc trưng",
+        "tips": "Ưa vùng đất ẩm ướt, ánh sáng mặt trời bán phần.",
+        "avg": [5.0, 3.4, 1.5, 0.2]
+    },
+    1: {
+        "name": "Iris-versicolor",
+        "icon": "🌺",
+        "color": "#EC4899",
+        "desc": "Màu hoa rực rỡ, kích thước cánh & đài cân đối",
+        "tips": "Phát triển tốt bên ven ao hồ, đầm lầy, đất giàu mùn.",
+        "avg": [5.9, 2.7, 4.2, 1.3]
+    },
+    2: {
+        "name": "Iris-virginica",
+        "icon": "🪷",
+        "color": "#3B82F6",
+        "desc": "Kích thước hoa lớn nhất, đài hoa dài nổi bật",
+        "tips": "Đòi hỏi độ ẩm cao liên tục và không gian phát triển lớn.",
+        "avg": [6.5, 3.0, 5.5, 2.0]
+    }
 }
 
 class IrisInput(BaseModel):
@@ -27,128 +47,118 @@ class IrisInput(BaseModel):
 def home():
     return """
     <!DOCTYPE html>
-    <html lang="vi" class="light">
+    <html lang="vi">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iris Studio - Phân Loại Hoa Thông Minh</title>
+        <title>Iris Studio - Botanical Analytics</title>
         <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-        <script>
-            tailwind.config = { darkMode: 'class' }
-        </script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+        <style>
+            body { font-family: 'Plus Jakarta Sans', sans-serif; }
+            .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); }
+        </style>
     </head>
-    <body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen transition-colors duration-300 p-4 md:p-8">
-        <div class="max-w-4xl mx-auto space-y-6">
+    <body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100 min-h-screen text-slate-800 p-4 md:p-8">
+        <div class="max-w-6xl mx-auto space-y-6">
             
-            <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700">
+            <header class="glass rounded-3xl p-5 shadow-sm border border-white/60 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <span class="text-3xl">🌸</span>
+                    <div class="w-10 h-10 bg-teal-500 rounded-2xl flex items-center justify-center text-white text-xl shadow-md">🌿</div>
                     <div>
-                        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Iris Flower</h1>
-                        <p class="text-xs text-slate-400">Dự đoán loài hoa sinh động & trực quan hóa dữ liệu</p>
+                        <h1 class="text-xl font-extrabold bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">Botanical Lab</h1>
+                        <p class="text-xs text-slate-500">Phân tích & Nhận diện loài hoa Iris đa chiều</p>
                     </div>
                 </div>
-                <button onclick="toggleDarkMode()" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
-                    <span id="themeIcon">🌙</span>
+                <button onclick="exportCSV()" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md transition flex items-center gap-1.5">
+                    <span>📥</span> Xuất Lịch Sử CSV
                 </button>
-            </div>
+            </header>
 
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <div class="md:col-span-7 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 space-y-5">
-                    
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">Mẫu hoa điển hình</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="py-1.5 px-2 bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-300 text-xs rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/50 font-medium transition">🪻 Setosa</button>
-                            <button onclick="applyPreset(6.0, 2.7, 5.1, 1.6)" class="py-1.5 px-2 bg-pink-50 dark:bg-pink-950/40 text-pink-600 dark:text-pink-300 text-xs rounded-lg hover:bg-pink-100 dark:hover:bg-pink-900/50 font-medium transition">🌺 Versicolor</button>
-                            <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="py-1.5 px-2 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-300 text-xs rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 font-medium transition">🪷 Virginica</button>
+                <div class="lg:col-span-5 glass p-6 rounded-3xl shadow-sm border border-white/60 space-y-5">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider">Thông Số Đầu Vào</h2>
+                        <span class="text-[10px] px-2 py-0.5 bg-teal-100 text-teal-700 rounded-full font-semibold">Tự động cập nhật</span>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setPreset(5.1, 3.5, 1.4, 0.2)" class="p-2 text-xs bg-purple-50 text-purple-700 rounded-xl hover:bg-purple-100 font-semibold transition border border-purple-200">🪻 Setosa</button>
+                        <button onclick="setPreset(6.0, 2.7, 5.1, 1.6)" class="p-2 text-xs bg-pink-50 text-pink-700 rounded-xl hover:bg-pink-100 font-semibold transition border border-pink-200">🌺 Versicolor</button>
+                        <button onclick="setPreset(6.5, 3.0, 5.5, 2.0)" class="p-2 text-xs bg-blue-50 text-blue-700 rounded-xl hover:bg-blue-100 font-semibold transition border border-blue-200">🪷 Virginica</button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Chiều dài đài (Sepal Length)</span>
+                                <span id="v_sl" class="text-teal-600 font-extrabold">5.1 cm</span>
+                            </div>
+                            <input type="range" min="4.0" max="8.0" step="0.1" id="sl" value="5.1" oninput="onInputChange()" class="w-full accent-teal-600">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Chiều rộng đài (Sepal Width)</span>
+                                <span id="v_sw" class="text-teal-600 font-extrabold">3.5 cm</span>
+                            </div>
+                            <input type="range" min="2.0" max="4.5" step="0.1" id="sw" value="3.5" oninput="onInputChange()" class="w-full accent-teal-600">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Chiều dài cánh (Petal Length)</span>
+                                <span id="v_pl" class="text-teal-600 font-extrabold">1.4 cm</span>
+                            </div>
+                            <input type="range" min="1.0" max="7.0" step="0.1" id="pl" value="1.4" oninput="onInputChange()" class="w-full accent-teal-600">
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span>Chiều rộng cánh (Petal Width)</span>
+                                <span id="v_pw" class="text-teal-600 font-extrabold">0.2 cm</span>
+                            </div>
+                            <input type="range" min="0.1" max="2.5" step="0.1" id="pw" value="0.2" oninput="onInputChange()" class="w-full accent-teal-600">
                         </div>
                     </div>
 
-                    <form id="irisForm" class="space-y-4">
-                        <div class="space-y-3">
-                            <div>
-                                <div class="flex justify-between text-xs font-semibold mb-1">
-                                    <span>Chiều dài đài hoa (Sepal Length)</span>
-                                    <span id="sl_val" class="text-indigo-500 font-bold">5.1 cm</span>
-                                </div>
-                                <input type="range" min="4.0" max="8.0" step="0.1" id="sepal_length" value="5.1" oninput="updateUI()" class="w-full accent-indigo-600">
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between text-xs font-semibold mb-1">
-                                    <span>Chiều rộng đài hoa (Sepal Width)</span>
-                                    <span id="sw_val" class="text-indigo-500 font-bold">3.5 cm</span>
-                                </div>
-                                <input type="range" min="2.0" max="4.5" step="0.1" id="sepal_width" value="3.5" oninput="updateUI()" class="w-full accent-indigo-600">
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between text-xs font-semibold mb-1">
-                                    <span>Chiều dài cánh hoa (Petal Length)</span>
-                                    <span id="pl_val" class="text-indigo-500 font-bold">1.4 cm</span>
-                                </div>
-                                <input type="range" min="1.0" max="7.0" step="0.1" id="petal_length" value="1.4" oninput="updateUI()" class="w-full accent-indigo-600">
-                            </div>
-
-                            <div>
-                                <div class="flex justify-between text-xs font-semibold mb-1">
-                                    <span>Chiều rộng cánh hoa (Petal Width)</span>
-                                    <span id="pw_val" class="text-indigo-500 font-bold">0.2 cm</span>
-                                </div>
-                                <input type="range" min="0.1" max="2.5" step="0.1" id="petal_width" value="0.2" oninput="updateUI()" class="w-full accent-indigo-600">
-                            </div>
-                        </div>
-
-                        <div id="warningBox" class="hidden p-2.5 bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-800 rounded-lg text-amber-700 dark:text-amber-400 text-xs flex items-center gap-2">
-                            <span>⚠️</span> <span id="warningText">Tỷ lệ cánh hoa/đài hoa hơi bất thường.</span>
-                        </div>
-
-                        <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl shadow-lg transition duration-200 active:scale-98">
-                            ⚡ Phân Tích & Dự Đoán
-                        </button>
-                    </form>
+                    <div id="anomalyAlert" class="hidden p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs flex items-center gap-2">
+                        <span>⚠️</span> <span>Thông số ngoại lệ: Hình dạng đài/cánh bất thường so với tự nhiên.</span>
+                    </div>
                 </div>
 
-                <div class="md:col-span-5 space-y-6">
+                <div class="lg:col-span-7 space-y-6">
                     
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 text-center">
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Mô hình hình học hoa</span>
-                        <div class="h-36 bg-slate-50 dark:bg-slate-900 rounded-xl flex items-center justify-center relative overflow-hidden border border-dashed border-slate-300 dark:border-slate-700">
-                            <svg id="flowerSvg" class="transition-all duration-300" width="100" height="100" viewBox="-50 -50 100 100">
-                                <ellipse id="svgSepal" cx="0" cy="0" rx="20" ry="40" fill="#818CF8" opacity="0.5"/>
-                                <ellipse id="svgSepal2" cx="0" cy="0" rx="40" ry="20" fill="#818CF8" opacity="0.5"/>
-                                <circle id="svgPetal" cx="0" cy="0" r="15" fill="#F472B6" opacity="0.8"/>
-                            </svg>
+                    <div id="resultBanner" class="glass p-6 rounded-3xl shadow-sm border border-white/60 transition-all duration-300">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <span id="resIcon" class="text-6xl animate-pulse">🪻</span>
+                                <div>
+                                    <h2 id="resName" class="text-2xl font-extrabold">Iris-setosa</h2>
+                                    <p id="resDesc" class="text-xs text-slate-500 mt-0.5">Cánh hoa ngắn, đài hoa rộng đặc trưng</p>
+                                </div>
+                            </div>
+                            <button onclick="copySummary()" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition">
+                                📋 Sao Chép
+                            </button>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-200/60 text-xs text-slate-600 flex items-center gap-2">
+                            <span>💡 <b>Mẹo chăm sóc:</b></span>
+                            <span id="resTips">Ưa vùng đất ẩm ướt, ánh sáng mặt trời bán phần.</span>
                         </div>
                     </div>
 
-                    <div id="resultCard" class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700 text-center transition-all duration-300">
-                        <div id="resultIcon" class="text-6xl mb-2 animate-bounce">❓</div>
-                        <h3 id="resultName" class="text-xl font-extrabold">Đang chờ dự đoán...</h3>
-                        <p id="resultDesc" class="text-xs text-slate-400 mt-1 mb-4">Hãy chọn thông số và bấm Dự Đoán</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="glass p-4 rounded-3xl border border-white/60">
+                            <span class="text-xs font-bold text-slate-600 block mb-2 text-center">Đồ Thị Radar So Với Trung Bình</span>
+                            <div class="h-48 relative">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
 
-                        <div id="probBars" class="space-y-2 text-left hidden pt-2 border-t border-slate-100 dark:border-slate-700">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase">Độ tin cậy mô hình</span>
-                            <div>
-                                <div class="flex justify-between text-xs mb-0.5"><span>Setosa</span><span id="prob0">0%</span></div>
-                                <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                    <div id="bar0" class="bg-purple-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs mb-0.5"><span>Versicolor</span><span id="prob1">0%</span></div>
-                                <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                    <div id="bar1" class="bg-pink-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div class="flex justify-between text-xs mb-0.5"><span>Virginica</span><span id="prob2">0%</span></div>
-                                <div class="w-full bg-slate-100 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-                                    <div id="bar2" class="bg-blue-500 h-full w-0 transition-all duration-500"></div>
-                                </div>
+                        <div class="glass p-4 rounded-3xl border border-white/60">
+                            <span class="text-xs font-bold text-slate-600 block mb-2 text-center">Không Gian Đặc Trưng (Cánh Hoa)</span>
+                            <div class="h-48 relative">
+                                <canvas id="scatterChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -156,22 +166,20 @@ def home():
                 </div>
             </div>
 
-            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-md border border-slate-200 dark:border-slate-700">
-                <h3 class="text-sm font-bold mb-3 flex items-center gap-2">
-                    <span>📜</span> Lịch sử dự đoán gần đây
-                </h3>
+            <div class="glass p-5 rounded-3xl shadow-sm border border-white/60">
+                <h3 class="text-sm font-bold mb-3">📜 Nhật Ký Phân Tích Gần Đây</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-500 dark:text-slate-400">
-                        <thead class="bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 font-semibold uppercase">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-100/70 font-semibold uppercase">
                             <tr>
-                                <th class="p-2">Loài hoa</th>
-                                <th class="p-2">Đài (D x R)</th>
-                                <th class="p-2">Cánh (D x R)</th>
-                                <th class="p-2">Mã Lớp</th>
+                                <th class="p-2.5 rounded-l-xl">Loài Hoa</th>
+                                <th class="p-2.5">Đài Hoa (D x R)</th>
+                                <th class="p-2.5">Cánh Hoa (D x R)</th>
+                                <th class="p-2.5 rounded-r-xl">Độ Tin Cậy</th>
                             </tr>
                         </thead>
-                        <tbody id="historyTable" class="divide-y divide-slate-100 dark:divide-slate-700">
-                            <tr><td colspan="4" class="p-3 text-center text-slate-400">Chưa có lịch sử dự đoán</td></tr>
+                        <tbody id="historyBody" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="p-3 text-center text-slate-400">Chưa có dữ liệu lịch sử</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -180,114 +188,170 @@ def home():
         </div>
 
         <script>
-            let historyData = [];
+            let radarChart, scatterChart;
+            let historyLog = [];
+            let currentRes = {};
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-            function toggleDarkMode() {
-                const html = document.documentElement;
-                if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    document.getElementById('themeIcon').textContent = '🌙';
+            // Play Subtle UI Sound
+            function playBeep() {
+                try {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.frequency.value = 440;
+                    gain.gain.value = 0.01;
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                } catch(e) {}
+            }
+
+            function initCharts() {
+                // Radar Chart Setup
+                const ctxRadar = document.getElementById('radarChart').getContext('2d');
+                radarChart = new Chart(ctxRadar, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Dài Đài', 'Rộng Đài', 'Dài Cánh', 'Rộng Cánh'],
+                        datasets: [
+                            { label: 'Đầu Vào', data: [5.1, 3.5, 1.4, 0.2], borderColor: '#0D9488', backgroundColor: 'rgba(13, 148, 136, 0.2)' },
+                            { label: 'Trung Bình Loài', data: [5.0, 3.4, 1.5, 0.2], borderColor: '#8B5CF6', backgroundColor: 'rgba(139, 92, 246, 0.1)' }
+                        ]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+                });
+
+                // Scatter Chart Setup
+                const ctxScatter = document.getElementById('scatterChart').getContext('2d');
+                scatterChart = new Chart(ctxScatter, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: 'Mẫu Hiện Tại',
+                            data: [{ x: 1.4, y: 0.2 }],
+                            backgroundColor: '#0D9488',
+                            pointRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { title: { display: true, text: 'Dài Cánh (cm)' }, min: 0, max: 8 },
+                            y: { title: { display: true, text: 'Rộng Cánh (cm)' }, min: 0, max: 3 }
+                        },
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            function setPreset(sl, sw, pl, pw) {
+                document.getElementById('sl').value = sl;
+                document.getElementById('sw').value = sw;
+                document.getElementById('pl').value = pl;
+                document.getElementById('pw').value = pw;
+                onInputChange();
+            }
+
+            let debounceTimer;
+            function onInputChange() {
+                playBeep();
+                const sl = parseFloat(document.getElementById('sl').value);
+                const sw = parseFloat(document.getElementById('sw').value);
+                const pl = parseFloat(document.getElementById('pl').value);
+                const pw = parseFloat(document.getElementById('pw').value);
+
+                document.getElementById('v_sl').textContent = sl + ' cm';
+                document.getElementById('v_sw').textContent = sw + ' cm';
+                document.getElementById('v_pl').textContent = pl + ' cm';
+                document.getElementById('v_pw').textContent = pw + ' cm';
+
+                // Check anomaly
+                const anomaly = document.getElementById('anomalyAlert');
+                if (pw > sw || pl > sl * 1.2) {
+                    anomaly.classList.remove('hidden');
                 } else {
-                    html.classList.add('dark');
-                    document.getElementById('themeIcon').textContent = '☀️';
+                    anomaly.classList.add('hidden');
                 }
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => requestPrediction(sl, sw, pl, pw), 200);
             }
 
-            function applyPreset(sl, sw, pl, pw) {
-                document.getElementById('sepal_length').value = sl;
-                document.getElementById('sepal_width').value = sw;
-                document.getElementById('petal_length').value = pl;
-                document.getElementById('petal_width').value = pw;
-                updateUI();
-            }
-
-            function updateUI() {
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
-
-                document.getElementById('sl_val').textContent = sl + ' cm';
-                document.getElementById('sw_val').textContent = sw + ' cm';
-                document.getElementById('pl_val').textContent = pl + ' cm';
-                document.getElementById('pw_val').textContent = pw + ' cm';
-
-                // Cập nhật kích thước hình học SVG
-                document.getElementById('svgSepal').setAttribute('ry', sl * 6);
-                document.getElementById('svgSepal').setAttribute('rx', sw * 6);
-                document.getElementById('svgSepal2').setAttribute('rx', sl * 6);
-                document.getElementById('svgSepal2').setAttribute('ry', sw * 6);
-                document.getElementById('svgPetal').setAttribute('r', (pl + pw) * 4);
-
-                // Kiểm tra cảnh báo bất thường
-                const warnBox = document.getElementById('warningBox');
-                if (pw > sw) {
-                    warnBox.classList.remove('hidden');
-                    document.getElementById('warningText').textContent = 'Chú ý: Chiều rộng cánh hoa lớn hơn chiều rộng đài hoa!';
-                } else {
-                    warnBox.classList.add('hidden');
-                }
-            }
-
-            document.getElementById('irisForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const payload = {
-                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
-                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
-                    petal_length: parseFloat(document.getElementById('petal_length').value),
-                    petal_width: parseFloat(document.getElementById('petal_width').value)
-                };
-
+            async function requestPrediction(sl, sw, pl, pw) {
                 const res = await fetch('/predict', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify({ sepal_length: sl, sepal_width: sw, petal_length: pl, petal_width: pw })
                 });
                 const data = await res.json();
+                currentRes = data;
 
-                // Cập nhật giao diện kết quả
-                document.getElementById('resultIcon').textContent = data.icon;
-                document.getElementById('resultName').textContent = data.prediction;
-                document.getElementById('resultName').style.color = data.color;
-                document.getElementById('resultDesc').textContent = data.desc;
+                // Update UI Banner
+                document.getElementById('resIcon').textContent = data.icon;
+                document.getElementById('resName').textContent = data.prediction;
+                document.getElementById('resName').style.color = data.color;
+                document.getElementById('resDesc').textContent = data.desc;
+                document.getElementById('resTips').textContent = data.tips;
 
-                // Cập nhật thanh xác suất
-                document.getElementById('probBars').classList.remove('hidden');
-                data.probabilities.forEach((p, idx) => {
-                    const pct = (p * 100).toFixed(1) + '%';
-                    document.getElementById(`prob${idx}`).textContent = pct;
-                    document.getElementById(`bar${idx}`).style.width = pct;
+                // Update Radar Chart
+                radarChart.data.datasets[0].data = [sl, sw, pl, pw];
+                radarChart.data.datasets[1].data = data.avg;
+                radarChart.data.datasets[1].borderColor = data.color;
+                radarChart.update();
+
+                // Update Scatter Chart
+                scatterChart.data.datasets[0].data = [{ x: pl, y: pw }];
+                scatterChart.data.datasets[0].backgroundColor = data.color;
+                scatterChart.update();
+
+                // Add to history
+                const probPercent = (Math.max(...data.probabilities) * 100).toFixed(1) + '%';
+                historyLog.unshift({
+                    name: `${data.icon} ${data.prediction}`,
+                    sepal: `${sl} x ${sw}`,
+                    petal: `${pl} x ${pw}`,
+                    confidence: probPercent
                 });
-
-                // Sáng tạo 7: Bắn pháo hoa Confetti ăn mừng kết quả
-                confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
-
-                // Sáng tạo 8: Ghi lại lịch sử dự đoán
-                historyData.unshift({
-                    name: data.prediction,
-                    icon: data.icon,
-                    sepal: `${payload.sepal_length} x ${payload.sepal_width}`,
-                    petal: `${payload.petal_length} x ${payload.petal_width}`,
-                    id: data.class_id
-                });
-                if (historyData.length > 5) historyData.pop();
+                if (historyLog.length > 5) historyLog.pop();
                 renderHistory();
-            });
+            }
 
             function renderHistory() {
-                const tbody = document.getElementById('historyTable');
-                tbody.innerHTML = historyData.map(item => `
-                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-                        <td class="p-2 font-bold">${item.icon} ${item.name}</td>
-                        <td class="p-2">${item.sepal}</td>
-                        <td class="p-2">${item.petal}</td>
-                        <td class="p-2"><span class="px-2 py-0.5 bg-slate-200 dark:bg-slate-700 rounded text-[10px]">Lớp ${item.id}</span></td>
+                document.getElementById('historyBody').innerHTML = historyLog.map(item => `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-2.5 font-bold">${item.name}</td>
+                        <td class="p-2.5">${item.sepal}</td>
+                        <td class="p-2.5">${item.petal}</td>
+                        <td class="p-2.5"><span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold text-[10px]">${item.confidence}</span></td>
                     </tr>
                 `).join('');
             }
 
-            updateUI();
+            function copySummary() {
+                const text = `Loài hoa: ${currentRes.prediction}\nKích thước cánh: ${document.getElementById('v_pl').textContent} x ${document.getElementById('v_pw').textContent}\nKích thước đài: ${document.getElementById('v_sl').textContent} x ${document.getElementById('v_sw').textContent}`;
+                navigator.clipboard.writeText(text);
+                alert("Đã sao chép tóm tắt kết quả!");
+            }
+
+            function exportCSV() {
+                if (historyLog.length === 0) return alert("Chưa có lịch sử để xuất file!");
+                let csv = "Loai Hoa,Dai Hoa,Canh Hoa,Do Tin Cay\n";
+                historyLog.forEach(r => {
+                    csv += `"${r.name}","${r.sepal}","${r.petal}","${r.confidence}"\n`;
+                });
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'iris_history.csv';
+                a.click();
+            }
+
+            window.onload = () => {
+                initCharts();
+                onInputChange();
+            };
         </script>
     </body>
     </html>
@@ -296,17 +360,15 @@ def home():
 @app.post("/predict")
 def predict(data: IrisInput):
     features = [[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]]
-    
     pred_id = int(model.predict(features)[0]) if model else 0
     
-    # Tính toán xác suất (Probability / Decision Score)
     try:
         probs = model.predict_proba(features)[0].tolist()
     except Exception:
         probs = [0.0, 0.0, 0.0]
         probs[pred_id] = 1.0
 
-    species_info = SPECIES_MAP.get(pred_id, {"name": "Không xác định", "icon": "❓", "color": "#6B7280", "desc": ""})
+    species_info = SPECIES_MAP.get(pred_id, SPECIES_MAP[0])
     
     return {
         "class_id": pred_id,
@@ -314,5 +376,7 @@ def predict(data: IrisInput):
         "icon": species_info["icon"],
         "color": species_info["color"],
         "desc": species_info["desc"],
+        "tips": species_info["tips"],
+        "avg": species_info["avg"],
         "probabilities": probs
     }
