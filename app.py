@@ -88,7 +88,7 @@ def home():
                     <span class="text-3xl p-2 bg-emerald-100/60 dark:bg-emerald-900/40 rounded-2xl">🌿</span>
                     <div>
                         <h1 class="text-xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 dark:from-emerald-400 dark:to-indigo-300 bg-clip-text text-transparent">Iris Flower</h1>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Phân loại & Phân tích Sinh thái Học Dựa trên AI</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Phân loại & Phân tích Sinh thái Học</p>
                     </div>
                 </div>
                 <button onclick="toggleDarkMode()" class="p-2.5 rounded-2xl glass-btn hover:scale-105 transition active:scale-95 shadow-sm">
