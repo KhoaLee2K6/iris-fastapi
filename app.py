@@ -107,7 +107,7 @@ def home():
                         </div>
                         <div class="grid grid-cols-3 gap-2">
                             <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="py-2 px-2 glass-btn hover:bg-purple-100/50 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 text-xs rounded-xl font-semibold transition shadow-sm hover:shadow active:scale-95">🪻 Setosa</button>
-                            <button onclick="applyPreset(6.0, 2.7, 5.1, 1.6)" class="py-2 px-2 glass-btn hover:bg-pink-100/50 dark:hover:bg-pink-900/40 text-pink-700 dark:text-pink-300 text-xs rounded-xl font-semibold transition shadow-sm hover:shadow active:scale-95">🌺 Versicolor</button>
+                            <button onclick="applyPreset(5.2, 3.6, 4.2, 1.4)" class="py-2 px-2 glass-btn hover:bg-pink-100/50 dark:hover:bg-pink-900/40 text-pink-700 dark:text-pink-300 text-xs rounded-xl font-semibold transition shadow-sm hover:shadow active:scale-95">🌺 Versicolor</button>
                             <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="py-2 px-2 glass-btn hover:bg-blue-100/50 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs rounded-xl font-semibold transition shadow-sm hover:shadow active:scale-95">🪷 Virginica</button>
                         </div>
                     </div>
