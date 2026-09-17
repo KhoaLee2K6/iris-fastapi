@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import joblib
 
-app = FastAPI(title="Iris Creative AI Classifier")
+app = FastAPI(title="Iris Creative Classifier")
 
 # Load model SVM
 try:
@@ -31,7 +31,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iris AI Studio - Phân Loại Hoa Thông Minh</title>
+        <title>Iris Studio - Phân Loại Hoa Thông Minh</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
         <script>
@@ -45,7 +45,7 @@ def home():
                 <div class="flex items-center gap-3">
                     <span class="text-3xl">🌸</span>
                     <div>
-                        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Iris AI Classifier Studio</h1>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">Iris Flower</h1>
                         <p class="text-xs text-slate-400">Dự đoán loài hoa sinh động & trực quan hóa dữ liệu</p>
                     </div>
                 </div>
