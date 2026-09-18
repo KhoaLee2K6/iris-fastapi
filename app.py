@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 import joblib
+import math
 
 app = FastAPI(title="Iris Creative AI Classifier")
 
@@ -352,7 +353,7 @@ def home():
                 document.getElementById('svgSepal2').setAttribute('ry', sw * 5.5);
                 document.getElementById('svgPetal').setAttribute('r', (pl + pw) * 3.8);
 
-                // Anomaly Detector: Kiểm tra quy luật sinh học ngoại lệ
+                // Anomaly Detector
                 const warnBox = document.getElementById('warningBox');
                 let anomalies = [];
 
@@ -397,7 +398,7 @@ def home():
                 document.getElementById('resultName').style.color = data.color;
                 document.getElementById('resultDesc').textContent = data.desc;
 
-                // Hiển thị Mẹo chăm sóc sinh học (Botanic Care Tips)
+                // Hiển thị Mẹo chăm sóc sinh học
                 if (data.care_tips) {
                     document.getElementById('careBox').classList.remove('hidden');
                     document.getElementById('careTipsText').innerHTML = data.care_tips.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -455,15 +456,51 @@ def home():
 
 @app.post("/predict")
 def predict(data: IrisInput):
-    features = [[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]]
+    sl, sw, pl, pw = data.sepal_length, data.sepal_width, data.petal_length, data.petal_width
+    features = [[sl, sw, pl, pw]]
     
-    pred_id = int(model.predict(features)[0]) if model else 0
+    probs = None
     
-    try:
-        probs = model.predict_proba(features)[0].tolist()
-    except Exception:
-        probs = [0.0, 0.0, 0.0]
-        probs[pred_id] = 1.0
+    # 1. Nếu mô hình tồn tại, trích xuất điểm số phân lớp và áp dụng Temperature Softmax
+    if model is not None:
+        try:
+            if hasattr(model, "predict_proba"):
+                raw_probs = model.predict_proba(features)[0].tolist()
+                # Phân bổ mềm xác suất (Label Smoothing) để loại bỏ 100% tuyệt đối
+                probs = [p * 0.85 + 0.05 for p in raw_probs]
+                total = sum(probs)
+                probs = [round(p / total, 4) for p in probs]
+            elif hasattr(model, "decision_function"):
+                scores = model.decision_function(features)[0]
+                if hasattr(scores, "__len__"):
+                    exp_scores = [math.exp(s / 1.5) for s in scores]
+                    total = sum(exp_scores)
+                    probs = [round(e / total, 4) for e in exp_scores]
+        except Exception:
+            probs = None
+
+    # 2. Thuật toán fallback mềm hóa: Tính toán xác suất mềm dựa trên khoảng cách đặc trưng sinh học
+    if probs is None:
+        # Tâm trung bình sinh học chuẩn của 3 loại Iris
+        centers = [
+            [5.0, 3.4, 1.5, 0.2],  # Setosa
+            [5.9, 2.7, 4.2, 1.3],  # Versicolor
+            [6.5, 3.0, 5.5, 2.0]   # Virginica
+        ]
+        
+        # Tính khoảng cách Euclidean
+        distances = []
+        for c in centers:
+            dist = math.sqrt((sl - c[0])**2 + (sw - c[1])**2 + (pl - c[2])**2 + (pw - c[3])**2)
+            distances.append(-dist * 1.2)  # Hệ số mượt cho Softmax
+            
+        # Hàm Softmax quy đổi khoảng cách thành phần trăm mềm
+        exp_dist = [math.exp(d) for d in distances]
+        total = sum(exp_dist)
+        probs = [round(e / total, 4) for e in exp_dist]
+
+    # Chọn nhãn có xác suất cao nhất
+    pred_id = probs.index(max(probs))
 
     species_info = SPECIES_MAP.get(pred_id, {
         "name": "Không xác định", 
