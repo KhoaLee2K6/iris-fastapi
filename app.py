@@ -194,7 +194,7 @@ def home():
 
                     <button onclick="toggleTheme()" id="themeBtn" class="px-3 py-2 bg-stone-200/80 dark:bg-stone-800/80 hover:bg-stone-300 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-2xl border border-stone-300/60 dark:border-stone-700 text-xs transition flex items-center gap-1.5 shadow-sm">
                         <span id="themeIcon">☀️</span>
-                        <span id="themeText" class="hidden md:inline">Thanh Dịu</span>
+                        <span id="themeText" class="hidden md:inline">Sáng</span>
                     </button>
                 </div>
             </header>
