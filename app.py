@@ -6,7 +6,7 @@ import numpy as np
 
 app = FastAPI(title="Iris BioLab AI Classifier")
 
-# Load model SVM
+# Load model SVM (nếu có)
 try:
     model = joblib.load("svm_model.pkl")
 except Exception:
@@ -41,6 +41,67 @@ class IrisInput(BaseModel):
     sepal_width: float
     petal_length: float
     petal_width: float
+
+def calculate_soft_probabilities(features: list) -> list:
+    """
+    Tính xác suất mềm dựa trên khoảng cách chuẩn hóa Gauss đến tâm bộ dữ liệu Iris.
+    Đảm bảo xác suất luôn bám sát thông số nhập vào nhưng không bao giờ đạt 100%.
+    """
+    # Tâm đặc trưng trung bình của 3 loài [SL, SW, PL, PW]
+    centroids = np.array([
+        [5.01, 3.43, 1.46, 0.25],  # Setosa
+        [5.94, 2.77, 4.26, 1.33],  # Versicolor
+        [6.59, 2.97, 5.55, 2.03]   # Virginica
+    ])
+    stds = np.array([0.5, 0.4, 0.5, 0.3])
+    
+    # Tính khoảng cách Euclidean chuẩn hóa
+    diff = (np.array(features) - centroids) / stds
+    distances = np.sum(diff ** 2, axis=1)
+    
+    # Chuyển khoảng cách thành Logits & áp dụng Softmax với Temperature T=1.5
+    logits = -0.5 * distances
+    exp_logits = np.exp((logits - np.max(logits)) / 1.5)
+    probs = exp_logits / np.sum(exp_logits)
+    
+    # Khống chế không cho vượt quá 98% để giữ tính ngẫu nhiên tự nhiên
+    probs = np.clip(probs, 0.005, 0.980)
+    probs = probs / np.sum(probs)
+    return probs.tolist()
+
+@app.post("/predict")
+def predict(data: IrisInput):
+    features = [data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]
+    
+    if model is not None:
+        try:
+            if hasattr(model, "predict_proba"):
+                raw_probs = model.predict_proba([features])[0]
+            else:
+                dec = model.decision_function([features])[0]
+                exp_dec = np.exp(dec - np.max(dec))
+                raw_probs = exp_dec / np.sum(exp_dec)
+            
+            # Chuẩn hóa để không bị 100% tuyệt đối
+            probs = np.clip(raw_probs, 0.01, 0.98)
+            probs = probs / np.sum(probs)
+            pred_class = int(np.argmax(probs))
+        except Exception:
+            probs = calculate_soft_probabilities(features)
+            pred_class = int(np.argmax(probs))
+    else:
+        probs = calculate_soft_probabilities(features)
+        pred_class = int(np.argmax(probs))
+        
+    info = SPECIES_MAP[pred_class]
+    return {
+        "prediction": info["name"],
+        "icon": info["icon"],
+        "color": info["color"],
+        "desc": info["desc"],
+        "care_tips": info["care_tips"],
+        "probabilities": [round(float(p), 4) for p in probs]
+    }
 
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -95,7 +156,6 @@ def home():
     </head>
     <body class="bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans min-h-screen p-4 md:p-8 selection:bg-emerald-500 selection:text-slate-950 transition-colors duration-300">
         
-        <!-- Background Decorative Elements -->
         <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div class="absolute -top-40 -left-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
             <div class="absolute top-1/2 -right-40 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl"></div>
@@ -103,7 +163,6 @@ def home():
 
         <div class="max-w-6xl mx-auto space-y-6 relative z-10">
             
-            <!-- HEADER BAR -->
             <header class="bento-card p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4">
                 <div class="flex items-center gap-3.5">
                     <div class="p-2.5 bg-emerald-500/10 border border-emerald-500/30 rounded-xl text-emerald-500 dark:text-emerald-400">
@@ -118,9 +177,7 @@ def home():
                     </div>
                 </div>
 
-                <!-- CONTROLS & PRESETS -->
                 <div class="flex items-center gap-3">
-                    <!-- PRESET BUTTONS -->
                     <div class="flex items-center gap-1.5 bg-slate-200/80 dark:bg-slate-900/80 p-1.5 rounded-xl border border-slate-300 dark:border-slate-800">
                         <span class="text-[11px] font-mono text-slate-500 dark:text-slate-400 px-2 uppercase hidden sm:inline">Mẫu:</span>
                         <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="px-2.5 py-1 hover:bg-slate-300 dark:hover:bg-slate-800 text-purple-600 dark:text-purple-400 text-xs rounded-lg font-mono transition">Setosa</button>
@@ -128,7 +185,6 @@ def home():
                         <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-2.5 py-1 hover:bg-slate-300 dark:hover:bg-slate-800 text-blue-600 dark:text-blue-400 text-xs rounded-lg font-mono transition">Virginica</button>
                     </div>
 
-                    <!-- THEME TOGGLE BUTTON -->
                     <button onclick="toggleTheme()" id="themeBtn" class="px-3 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-mono transition flex items-center gap-1.5 shadow-sm">
                         <span id="themeIcon">☀️</span>
                         <span id="themeText" class="hidden md:inline">Sáng</span>
@@ -136,10 +192,8 @@ def home():
                 </div>
             </header>
 
-            <!-- MAIN BENTO GRID -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <!-- INPUT PARAMETERS CARD (LEFT 7 COLS) -->
                 <div class="lg:col-span-7 bento-card p-6 rounded-3xl space-y-6">
                     <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-4">
                         <h2 class="text-sm font-bold font-mono text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-2">
@@ -150,8 +204,6 @@ def home():
 
                     <form id="irisForm" class="space-y-5">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            
-                            <!-- Sepal Length -->
                             <div class="p-4 bg-slate-100/80 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-700 transition space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">Chiều dài đài (Sepal L)</span>
@@ -164,7 +216,6 @@ def home():
                                 </div>
                             </div>
 
-                            <!-- Sepal Width -->
                             <div class="p-4 bg-slate-100/80 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-700 transition space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">Chiều rộng đài (Sepal W)</span>
@@ -177,7 +228,6 @@ def home():
                                 </div>
                             </div>
 
-                            <!-- Petal Length -->
                             <div class="p-4 bg-slate-100/80 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-700 transition space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">Chiều dài cánh (Petal L)</span>
@@ -190,7 +240,6 @@ def home():
                                 </div>
                             </div>
 
-                            <!-- Petal Width -->
                             <div class="p-4 bg-slate-100/80 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800/80 hover:border-slate-400 dark:hover:border-slate-700 transition space-y-2">
                                 <div class="flex justify-between items-center">
                                     <span class="text-xs text-slate-600 dark:text-slate-400 font-medium">Chiều rộng cánh (Petal W)</span>
@@ -202,10 +251,8 @@ def home():
                                     <button type="button" onclick="adjustValue('petal_width', 0.1)" class="w-7 h-7 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-mono font-bold">+</button>
                                 </div>
                             </div>
-
                         </div>
 
-                        <!-- ANOMALY WARNING BOX -->
                         <div id="warningBox" class="hidden p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-700 dark:text-amber-300 text-xs flex items-start gap-2.5">
                             <span class="text-base">⚡</span>
                             <div>
@@ -214,7 +261,6 @@ def home():
                             </div>
                         </div>
 
-                        <!-- SUBMIT BUTTON -->
                         <button type="submit" class="w-full py-4 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 text-slate-950 font-extrabold font-mono rounded-2xl shadow-lg shadow-emerald-500/20 transition duration-200 active:scale-[0.99] flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             KÍCH HOẠT PHÂN TÍCH SUY LUẬN AI
@@ -222,10 +268,7 @@ def home():
                     </form>
                 </div>
 
-                <!-- RIGHT BENTO COLUMN: SVG + RESULTS (RIGHT 5 COLS) -->
                 <div class="lg:col-span-5 space-y-6">
-                    
-                    <!-- SVG BIOMETRIC CANVAS -->
                     <div class="bento-card p-5 rounded-3xl space-y-3 text-center relative overflow-hidden">
                         <div class="flex justify-between items-center text-xs font-mono text-slate-500 dark:text-slate-400">
                             <span>GEO-VECTOR MONITOR</span>
@@ -240,7 +283,6 @@ def home():
                         </div>
                     </div>
 
-                    <!-- AI INFERENCE RESULT CARD -->
                     <div id="resultCard" class="bento-card p-6 rounded-3xl text-center space-y-4 glow-emerald transition-all duration-300">
                         <div class="space-y-1">
                             <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">❓</div>
@@ -248,13 +290,11 @@ def home():
                             <p id="resultDesc" class="text-xs text-slate-500 dark:text-slate-400">Nhập thông số và bấm Kích Hoạt Phân Tích</p>
                         </div>
 
-                        <!-- CARE TIPS -->
                         <div id="careBox" class="hidden p-3.5 bg-slate-200/60 dark:bg-slate-900/90 border border-emerald-500/30 rounded-2xl text-left text-xs text-slate-700 dark:text-slate-300 space-y-1.5">
                             <span class="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-[11px] uppercase tracking-wider block border-b border-slate-300 dark:border-slate-800 pb-1">🪴 Đặc tính & Mẹo Sinh Thái</span>
                             <p id="careTipsText" class="leading-relaxed"></p>
                         </div>
 
-                        <!-- PROBABILITY METRICS -->
                         <div id="probBars" class="space-y-2.5 text-left hidden pt-3 border-t border-slate-200 dark:border-slate-800">
                             <span class="text-[10px] font-mono font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest block">Xác xuất tin cậy (Confidence Metrics)</span>
                             
@@ -282,10 +322,7 @@ def home():
                 </div>
             </div>
 
-            <!-- LOWER BENTO GRID: BENCHMARKS & LOGS -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <!-- DATASET BENCHMARK TABLE (6 COLS) -->
                 <div class="lg:col-span-6 bento-card p-5 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
                         <h3 class="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
@@ -330,7 +367,6 @@ def home():
                     </div>
                 </div>
 
-                <!-- SCAN HISTORY LOG (6 COLS) -->
                 <div class="lg:col-span-6 bento-card p-5 rounded-3xl space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-200 dark:border-slate-800 pb-3">
                         <h3 class="text-xs font-bold font-mono text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
@@ -356,7 +392,6 @@ def home():
                         </table>
                     </div>
                 </div>
-
             </div>
 
         </div>
@@ -364,7 +399,6 @@ def home():
         <script>
             let historyData = [];
 
-            // DARK / LIGHT THEME TOGGLE
             function toggleTheme() {
                 const html = document.documentElement;
                 const icon = document.getElementById('themeIcon');
@@ -411,20 +445,18 @@ def home():
                 document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
                 document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
 
-                // Cập nhật SVG Visualizer
                 document.getElementById('svgSepal').setAttribute('ry', sl * 5.5);
                 document.getElementById('svgSepal').setAttribute('rx', sw * 5.5);
                 document.getElementById('svgSepal2').setAttribute('rx', sl * 5.5);
                 document.getElementById('svgSepal2').setAttribute('ry', sw * 5.5);
                 document.getElementById('svgPetal').setAttribute('r', (pl + pw) * 3.8);
 
-                // Anomaly Detector
                 const warnBox = document.getElementById('warningBox');
                 let anomalies = [];
 
                 if (pw > sw) anomalies.push("Rộng cánh lớn hơn Rộng đài.");
                 if (sw > sl) anomalies.push("Rộng đài vượt quá Dài đài.");
-                if (pl > sl * 1.15) anomalies.push("Dài cánh lớn bất thường so meo Dài đài.");
+                if (pl > sl * 1.15) anomalies.push("Dài cánh lớn bất thường so với Dài đài.");
 
                 if (anomalies.length > 0) {
                     warnBox.classList.remove('hidden');
@@ -451,19 +483,16 @@ def home():
                 });
                 const data = await res.json();
 
-                // Cập nhật kết quả dự đoán
                 document.getElementById('resultIcon').textContent = data.icon;
                 document.getElementById('resultName').textContent = data.prediction;
                 document.getElementById('resultName').style.color = data.color;
                 document.getElementById('resultDesc').textContent = data.desc;
 
-                // Hiển thị Mẹo chăm sóc
                 if (data.care_tips) {
                     document.getElementById('careBox').classList.remove('hidden');
                     document.getElementById('careTipsText').innerHTML = data.care_tips.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 }
 
-                // Cập nhật thanh xác suất
                 document.getElementById('probBars').classList.remove('hidden');
                 data.probabilities.forEach((p, idx) => {
                     const pct = (p * 100).toFixed(1) + '%';
@@ -471,25 +500,18 @@ def home():
                     document.getElementById(`bar${idx}`).style.width = pct;
                 });
 
-                // Confetti
                 confetti({ particleCount: 40, spread: 50, origin: { y: 0.7 } });
 
-                // Ghi lịch sử
                 historyData.unshift({
                     name: data.prediction,
                     icon: data.icon,
                     sepal: `${payload.sepal_length}x${payload.sepal_width}`,
                     petal: `${payload.petal_length}x${payload.petal_width}`,
-                    id: data.class_id
+                    classId: data.prediction.replace('Iris-', '')
                 });
                 if (historyData.length > 5) historyData.pop();
                 renderHistory();
             });
-
-            function clearHistory() {
-                historyData = [];
-                renderHistory();
-            }
 
             function renderHistory() {
                 const tbody = document.getElementById('historyTable');
@@ -499,12 +521,17 @@ def home():
                 }
                 tbody.innerHTML = historyData.map(item => `
                     <tr class="hover:bg-slate-200/50 dark:hover:bg-slate-900/50 transition">
-                        <td class="py-2 font-bold">${item.icon} ${item.name}</td>
-                        <td>${item.sepal}</td>
-                        <td>${item.petal}</td>
-                        <td><span class="px-2 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded text-[10px]">#0${item.id}</span></td>
+                        <td class="py-2.5 font-bold flex items-center gap-1"><span>${item.icon}</span> ${item.name}</td>
+                        <td class="py-2.5 text-slate-500">${item.sepal}</td>
+                        <td class="py-2.5 text-slate-500">${item.petal}</td>
+                        <td class="py-2.5 font-mono text-[10px] uppercase opacity-75">${item.classId}</td>
                     </tr>
                 `).join('');
+            }
+
+            function clearHistory() {
+                historyData = [];
+                renderHistory();
             }
 
             updateUI();
@@ -512,62 +539,3 @@ def home():
     </body>
     </html>
     """
-
-@app.post("/predict")
-def predict(data: IrisInput):
-    features = [[data.sepal_length, data.sepal_width, data.petal_length, data.petal_width]]
-    
-    # 1. Tính toán xác suất thô (Raw Probabilities)
-    if model is not None:
-        try:
-            raw_probs = model.predict_proba(features)[0].tolist()
-        except Exception:
-            try:
-                pred_class = int(model.predict(features)[0])
-                raw_probs = [0.1, 0.1, 0.1]
-                raw_probs[pred_class] = 0.8
-            except Exception:
-                raw_probs = [0.33, 0.33, 0.34]
-    else:
-        # Giả lập xác suất dựa theo đặc trưng nếu chưa load được model .pkl
-        pl = data.petal_length
-        if pl < 2.5:
-            raw_probs = [0.70, 0.20, 0.10]
-        elif pl < 4.8:
-            raw_probs = [0.15, 0.60, 0.25]
-        else:
-            raw_probs = [0.10, 0.20, 0.70]
-
-    # 2. Áp dụng Label Smoothing (mềm hóa xác suất) để kết quả KHÔNG BAO GIỜ bị 100%
-    smoothing_factor = 0.25  # Tỷ lệ làm mềm
-    num_classes = len(raw_probs)
-    
-    smoothed_probs = [
-        (1 - smoothing_factor) * p + (smoothing_factor / num_classes)
-        for p in raw_probs
-    ]
-    
-    # Chuẩn hóa lại tổng = 1.0 và làm tròn 3 chữ số thập phân
-    total = sum(smoothed_probs)
-    probs = [round(p / total, 3) for p in smoothed_probs]
-
-    # Lấy class_id có xác suất cao nhất sau khi làm mềm
-    pred_id = int(np.argmax(probs))
-
-    species_info = SPECIES_MAP.get(pred_id, {
-        "name": "Không xác định", 
-        "icon": "❓", 
-        "color": "#6B7280", 
-        "desc": "", 
-        "care_tips": ""
-    })
-    
-    return {
-        "class_id": pred_id,
-        "prediction": species_info["name"],
-        "icon": species_info["icon"],
-        "color": species_info["color"],
-        "desc": species_info["desc"],
-        "care_tips": species_info.get("care_tips", ""),
-        "probabilities": probs
-    }
