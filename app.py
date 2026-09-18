@@ -278,7 +278,7 @@ def home():
                         <!-- Submit Button -->
                         <button type="submit" class="w-full py-4 bg-stone-800 dark:bg-stone-100 hover:bg-stone-900 dark:hover:bg-white text-stone-100 dark:text-stone-900 font-bold rounded-2xl shadow-md transition duration-300 active:scale-[0.99] flex items-center justify-center gap-2 tracking-wide">
                             <svg class="w-5 h-5 text-emerald-400 dark:text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                            KHÁM PHÁ & NHẬN DIỆN
+                            PHÂN TÍCH & DỰ ĐOÁN
                         </button>
                     </form>
                 </div>
@@ -429,11 +429,11 @@ def home():
                 if (html.classList.contains('dark')) {
                     html.classList.remove('dark');
                     icon.textContent = '🌙';
-                    text.textContent = 'Yên Tĩnh';
+                    text.textContent = 'Sáng';
                 } else {
                     html.classList.add('dark');
                     icon.textContent = '☀️';
-                    text.textContent = 'Thanh Dịu';
+                    text.textContent = 'Tối';
                 }
             }
 
