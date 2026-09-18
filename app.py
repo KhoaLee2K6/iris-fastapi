@@ -22,8 +22,8 @@ SPECIES_MAP = {
     },
     1: {
         "name": "Iris-versicolor",
-        "icon": "🌸",
-        "color": "#ec4899",
+        "icon": "🌷",
+        "color": "#fb923c",  # Tông màu tulip hồng cam
         "desc": "Kích thước vừa vặn, sắc hoa hài hòa giữa thiên nhiên, vươn mình mềm mại.",
         "care_tips": "💧 **Thổ nhưỡng & Ánh sáng:** Ưa đất ẩm mịn, giàu mùn hữu cơ tự nhiên. Thích hợp không gian dịu mát có ánh sáng tán xạ."
     },
@@ -134,12 +134,8 @@ def home():
             }
         </script>
         <style>
-            body {
-                background-color: #f4f7f4;
-            }
-            .dark body {
-                background-color: #0f1712;
-            }
+            body { background-color: #f4f7f4; }
+            .dark body { background-color: #0f1712; }
             .nature-card {
                 background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(16px);
@@ -151,9 +147,7 @@ def home():
                 border: 1px solid rgba(163, 190, 158, 0.12);
                 box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.3);
             }
-            .nature-card:hover {
-                border-color: rgba(82, 121, 111, 0.3);
-            }
+            .nature-card:hover { border-color: rgba(82, 121, 111, 0.3); }
             input[type=range] {
                 height: 5px;
                 border-radius: 9999px;
@@ -175,9 +169,10 @@ def home():
             <header class="nature-card p-5 rounded-3xl flex flex-wrap justify-between items-center gap-4">
                 <div class="flex items-center gap-3.5">
                     <div class="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-emerald-600 dark:text-emerald-400">
-                        <!-- Custom Nature Icon: Leaf & Blossom -->
+                        <!-- Biểu tượng Lá Cây Xanh Tự Nhiên -->
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 21a9 9 0 0 1-9-9c0-4.97 4.03-9 9-9 4.12 0 7.5 2.78 8.5 6.5M12 21c1.66 0 3-1.34 3-3 0-2-3-5-3-5s-3 3-3 5c0 1.66 1.34 3 3 3zM12 3v10m-4-6 8 4"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
                         </svg>
                     </div>
                     <div>
@@ -193,7 +188,7 @@ def home():
                     <div class="flex items-center gap-1.5 bg-stone-200/60 dark:bg-stone-900/60 p-1.5 rounded-2xl border border-stone-300/50 dark:border-stone-800">
                         <span class="text-[11px] text-stone-500 dark:text-stone-400 px-2 hidden sm:inline font-medium">Mẫu hoa:</span>
                         <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="px-3 py-1 hover:bg-white dark:hover:bg-stone-800 text-purple-700 dark:text-purple-300 text-xs rounded-xl font-medium transition shadow-sm">Setosa</button>
-                        <button onclick="applyPreset(5.2, 3.6, 4.2, 1.4)" class="px-3 py-1 hover:bg-white dark:hover:bg-stone-800 text-pink-700 dark:text-pink-300 text-xs rounded-xl font-medium transition shadow-sm">Versicolor</button>
+                        <button onclick="applyPreset(5.2, 3.6, 4.2, 1.4)" class="px-3 py-1 hover:bg-white dark:hover:bg-stone-800 text-orange-600 dark:text-orange-300 text-xs rounded-xl font-medium transition shadow-sm">Versicolor</button>
                         <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-3 py-1 hover:bg-white dark:hover:bg-stone-800 text-blue-700 dark:text-blue-300 text-xs rounded-xl font-medium transition shadow-sm">Virginica</button>
                     </div>
 
@@ -309,7 +304,7 @@ def home():
                     <!-- Prediction Result Card -->
                     <div id="resultCard" class="nature-card p-6 rounded-3xl text-center space-y-4 transition-all duration-300">
                         <div class="space-y-1">
-                            <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">🌿</div>
+                            <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">🍃</div>
                             <h3 id="resultName" class="text-2xl font-bold font-serif text-stone-800 dark:text-stone-100">Sẵn Sàng Khám Phá</h3>
                             <p id="resultDesc" class="text-xs text-stone-500 dark:text-stone-400">Điều chỉnh thông số và bấm để lắng nghe kết quả</p>
                         </div>
@@ -330,9 +325,9 @@ def home():
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <div class="flex justify-between text-xs"><span>Iris-versicolor</span><span id="prob1" class="text-pink-600 dark:text-pink-400 font-bold">0%</span></div>
+                                <div class="flex justify-between text-xs"><span>Iris-versicolor</span><span id="prob1" class="text-orange-500 dark:text-orange-400 font-bold">0%</span></div>
                                 <div class="w-full bg-stone-200 dark:bg-stone-800 h-2 rounded-full overflow-hidden">
-                                    <div id="bar1" class="bg-pink-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                                    <div id="bar1" class="bg-orange-400 h-full w-0 transition-all duration-500 rounded-full"></div>
                                 </div>
                             </div>
                             <div class="space-y-1">
@@ -376,7 +371,7 @@ def home():
                                     <td>0.1 - 0.6</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2.5 font-bold text-pink-600 dark:text-pink-400">Versicolor</td>
+                                    <td class="py-2.5 font-bold text-orange-500 dark:text-orange-400">Versicolor</td>
                                     <td>4.9 - 7.0</td>
                                     <td>2.0 - 3.4</td>
                                     <td>3.0 - 5.1</td>
@@ -515,41 +510,35 @@ def home():
                     document.getElementById('resultName').textContent = data.prediction;
                     document.getElementById('resultName').style.color = data.color;
                     document.getElementById('resultDesc').textContent = data.desc;
+                    
+                    document.getElementById('careTipsText').innerHTML = data.care_tips;
+                    document.getElementById('careBox').classList.remove('hidden');
 
-                    if (data.care_tips) {
-                        document.getElementById('careBox').classList.remove('hidden');
-                        document.getElementById('careTipsText').innerHTML = data.care_tips.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>');
+                    const probs = data.probabilities;
+                    document.getElementById('prob0').textContent = Math.round(probs[0] * 100) + '%';
+                    document.getElementById('prob1').textContent = Math.round(probs[1] * 100) + '%';
+                    document.getElementById('prob2').textContent = Math.round(probs[2] * 100) + '%';
+
+                    document.getElementById('bar0').style.width = (probs[0] * 100) + '%';
+                    document.getElementById('bar1').style.width = (probs[1] * 100) + '%';
+                    document.getElementById('bar2').style.width = (probs[2] * 100) + '%';
+                    document.getElementById('probBars').classList.remove('hidden');
+
+                    if (window.confetti) {
+                        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
                     }
 
-                    if (data.probabilities) {
-                        document.getElementById('probBars').classList.remove('hidden');
-                        data.probabilities.forEach((p, idx) => {
-                            const percent = (p * 100).toFixed(1) + '%';
-                            document.getElementById(`prob${idx}`).textContent = percent;
-                            document.getElementById(`bar${idx}`).style.width = percent;
-                        });
-                    }
-
-                    // Push to history
-                    historyData.unshift({
-                        name: data.prediction,
-                        icon: data.icon,
-                        sepal: `${payload.sepal_length}x${payload.sepal_width}`,
-                        petal: `${payload.petal_length}x${payload.petal_width}`
-                    });
-                    renderHistory();
-
-                    // Confetti effect on successful classification
-                    confetti({
-                        particleCount: 35,
-                        spread: 60,
-                        origin: { y: 0.7 }
-                    });
-
+                    addHistory(data.prediction, payload);
                 } catch (err) {
-                    console.error("Lỗi khi gửi dữ liệu:", err);
+                    console.error("Error predicting:", err);
                 }
             });
+
+            function addHistory(pred, p) {
+                historyData.unshift({ pred, ...p });
+                if (historyData.length > 5) historyData.pop();
+                renderHistory();
+            }
 
             function renderHistory() {
                 const tbody = document.getElementById('historyTable');
@@ -557,13 +546,11 @@ def home():
                     tbody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-stone-400 font-sans">Chưa có nhật ký quan sát</td></tr>';
                     return;
                 }
-                tbody.innerHTML = historyData.slice(0, 5).map(item => `
+                tbody.innerHTML = historyData.map(item => `
                     <tr>
-                        <td class="py-2.5 font-semibold flex items-center gap-1.5">
-                            <span>${item.icon}</span> ${item.name}
-                        </td>
-                        <td>${item.sepal}</td>
-                        <td>${item.petal}</td>
+                        <td class="py-2 font-bold">${item.pred}</td>
+                        <td>${item.sepal_length} x ${item.sepal_width}</td>
+                        <td>${item.petal_length} x ${item.petal_width}</td>
                     </tr>
                 `).join('');
             }
@@ -573,7 +560,6 @@ def home():
                 renderHistory();
             }
 
-            // Initial UI sync
             updateUI();
         </script>
     </body>
