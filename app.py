@@ -18,21 +18,21 @@ SPECIES_MAP = {
         "icon": "🪻",
         "color": "#8b5cf6",
         "desc": "Cánh hoa ngắn thanh thoát, đài hoa rộng. Vẻ đẹp nhỏ gọn, mộc mạc.",
-        "care_tips": "🌱 **Thổ nhưỡng & Ánh sáng:** Ưa đất tơi xốp, thoáng khí và thoát nước tốt. Phát triển rạng rỡ dưới ánh nắng ban mai nhẹ nhàng."
+        "care_tips": "🌱 Thổ nhưỡng & Ánh sáng: Ưa đất tơi xốp, thoáng khí và thoát nước tốt. Phát triển rạng rỡ dưới ánh nắng ban mai nhẹ nhàng."
     },
     1: {
         "name": "Iris-versicolor",
         "icon": "🌷",
         "color": "#fb923c",  # Tông màu tulip hồng cam
         "desc": "Kích thước vừa vặn, sắc hoa hài hòa giữa thiên nhiên, vươn mình mềm mại.",
-        "care_tips": "💧 **Thổ nhưỡng & Ánh sáng:** Ưa đất ẩm mịn, giàu mùn hữu cơ tự nhiên. Thích hợp không gian dịu mát có ánh sáng tán xạ."
+        "care_tips": "💧 Thổ nhưỡng & Ánh sáng: Ưa đất ẩm mịn, giàu mùn hữu cơ tự nhiên. Thích hợp không gian dịu mát có ánh sáng tán xạ."
     },
     2: {
         "name": "Iris-virginica",
         "icon": "🪷",
         "color": "#3b82f6",
         "desc": "Cánh hoa dài kiêu hãnh, vươn cao tràn đầy sức sống của núi rừng.",
-        "care_tips": "☀️ **Thổ nhưỡng & Ánh sáng:** Ưa đất phù sa ẩm đầm lầy, chịu nước tốt. Phát triển mạnh mẽ dưới ánh nắng mặt trời trọn vẹn."
+        "care_tips": "☀️ Thổ nhưỡng & Ánh sáng: Ưa đất phù sa ẩm đầm lầy, chịu nước tốt. Phát triển mạnh mẽ dưới ánh nắng mặt trời trọn vẹn."
     }
 }
 
