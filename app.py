@@ -31,7 +31,7 @@ SPECIES_MAP = {
         "name": "Iris-virginica",
         "icon": "🪷",
         "color": "#3b82f6",
-        "desc": "Cánh hoa dài kiêu hãnh, vươn cao tràn đầy sức sống của núi rừng.",
+        "desc": "Cánh hoa dài kiêu hãnh, vươn cao tràn đầy sức sống của.",
         "care_tips": "☀️ Thổ nhưỡng & Ánh sáng: Ưa đất phù sa ẩm đầm lầy, chịu nước tốt. Phát triển mạnh mẽ dưới ánh nắng mặt trời trọn vẹn."
     }
 }
