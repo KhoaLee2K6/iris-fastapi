@@ -101,7 +101,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Vườn Hoa Iris // Phân Tích Bầu Trời & Thiên Nhiên</title>
+        <title>Iris Flowers - Ban Mai Rực Rỡ</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -121,47 +121,109 @@ def home():
             }
         </script>
         <style>
-            /* Giao diện sáng: Bầu trời xanh bao la */
+            /* Giao diện sáng: Ban Mai Rực Rỡ (Bình minh ấm áp, vàng cam & hồng phấn) */
             body {
-                background: linear-gradient(135deg, #38bdf8 0%, #bae6fd 50%, #f0f9ff 100%);
+                background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 35%, #fed7aa 70%, #fef3c7 100%);
                 background-attachment: fixed;
             }
-            /* Giao diện tối: Đêm dịu mát */
+            /* Giao diện tối: Đêm lấp lánh nhiều sao */
             .dark body {
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f1712 100%);
+                background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
                 background-attachment: fixed;
             }
             .nature-card {
-                background: rgba(255, 255, 255, 0.65);
-                backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.8);
-                box-shadow: 0 10px 30px -10px rgba(14, 165, 233, 0.15);
+                background: rgba(255, 255, 255, 0.72);
+                backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.9);
+                box-shadow: 0 10px 35px -10px rgba(251, 146, 60, 0.2);
             }
             .dark .nature-card {
                 background: rgba(15, 23, 42, 0.75);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+                border: 1px solid rgba(255, 255, 255, 0.12);
+                box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
             }
             input[type=range] {
                 height: 6px;
                 border-radius: 9999px;
             }
+
+            /* --- Bầu trời đêm nhiều sao --- */
+            .stars-container { display: none; }
+            .dark .stars-container { display: block; }
+            .star {
+                position: absolute;
+                background-color: #ffffff;
+                border-radius: 50%;
+                opacity: 0.3;
+                animation: twinkle var(--duration, 3s) infinite ease-in-out var(--delay, 0s);
+            }
+            @keyframes twinkle {
+                0%, 100% { opacity: 0.2; transform: scale(0.8); }
+                50% { opacity: 1; transform: scale(1.4); box-shadow: 0 0 8px rgba(255, 255, 255, 0.9); }
+            }
+
+            /* --- Giao diện Ban Mai Rực Rỡ: Hiệu ứng Tia Nắng & Hạt Sáng Float --- */
+            .sunlight-container { display: block; }
+            .dark .sunlight-container { display: none; }
+
+            /* Tia nắng bừng sáng từ góc trên trái */
+            .sun-beam {
+                position: absolute;
+                top: -150px;
+                left: -100px;
+                width: 600px;
+                height: 600px;
+                background: radial-gradient(circle, rgba(253,224,71,0.45) 0%, rgba(251,146,60,0.2) 40%, rgba(255,255,255,0) 70%);
+                border-radius: 50%;
+                filter: blur(40px);
+                animation: pulseBeam 8s infinite ease-in-out alternate;
+            }
+            @keyframes pulseBeam {
+                0% { transform: scale(0.95) translate(0, 0); opacity: 0.8; }
+                100% { transform: scale(1.15) translate(20px, 20px); opacity: 1; }
+            }
+
+            /* Hạt bụi nắng lơ lửng */
+            .sun-particle {
+                position: absolute;
+                background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(254,215,170,0.8) 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 10px rgba(251,146,60,0.5);
+                animation: floatUp var(--duration, 10s) infinite ease-in-out var(--delay, 0s);
+            }
+            @keyframes floatUp {
+                0% {
+                    transform: translateY(0) translateX(0) scale(0.8);
+                    opacity: 0;
+                }
+                20% { opacity: 0.8; }
+                80% { opacity: 0.8; }
+                100% {
+                    transform: translateY(-120vh) translateX(var(--drift, 30px)) scale(1.2);
+                    opacity: 0;
+                }
+            }
         </style>
     </head>
     <body class="text-slate-800 dark:text-slate-100 font-sans min-h-screen p-4 md:p-8 transition-colors duration-500">
         
-        <!-- Hiệu ứng mây & ánh sáng bầu trời -->
-        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div class="absolute -top-20 left-10 w-96 h-96 bg-white/40 dark:bg-sky-500/10 rounded-full blur-3xl"></div>
-            <div class="absolute top-1/3 -right-20 w-96 h-96 bg-sky-200/50 dark:bg-indigo-900/10 rounded-full blur-3xl"></div>
+        <!-- HIỆU ỨNG GIAO DIỆN BAN MAI RỰC RỠ (Chỉ hiện khi ở Chế độ Sáng) -->
+        <div id="sunlight" class="sunlight-container fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            <div class="sun-beam"></div>
+            <div class="absolute top-1/4 right-10 w-96 h-96 bg-amber-200/40 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-10 left-1/3 w-80 h-80 bg-rose-200/30 rounded-full blur-3xl"></div>
+            <div id="sunParticles"></div>
         </div>
+
+        <!-- HIỆU ỨNG BẦU TRỜI ĐÊM NHIỀU SAO (Chỉ hiện khi ở Chế độ Tối) -->
+        <div id="stars" class="stars-container fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
 
         <div class="max-w-6xl mx-auto space-y-6 relative z-10">
             
             <!-- HEADER -->
             <header class="nature-card p-5 rounded-3xl flex flex-wrap justify-between items-center gap-4">
                 <div class="flex items-center gap-3.5">
-                    <div class="p-3 bg-sky-500/20 dark:bg-sky-500/10 border border-sky-400/30 rounded-2xl text-sky-700 dark:text-sky-400">
+                    <div class="p-3 bg-amber-500/20 dark:bg-indigo-500/20 border border-amber-400/40 dark:border-indigo-400/30 rounded-2xl text-amber-700 dark:text-indigo-300">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
@@ -169,24 +231,28 @@ def home():
                     </div>
                     <div>
                         <div class="flex items-center gap-2.5">
-                            <h1 class="text-xl font-bold font-serif tracking-wide text-sky-950 dark:text-slate-50">IRIS FLOWERS</h1>
-                            <span class="px-2.5 py-0.5 text-[10px] font-semibold bg-sky-100 dark:bg-sky-950/80 text-sky-800 dark:text-sky-300 border border-sky-300/60 dark:border-sky-800/50 rounded-full">Bầu Trời Xanh Ban Mai</span>
+                            <h1 class="text-xl font-bold font-serif tracking-wide text-amber-950 dark:text-slate-50">IRIS FLOWERS</h1>
+                            
+                            <!-- Badge Tiêu đề -->
+                            <span id="skyBadge" class="px-3 py-0.5 text-[11px] font-semibold bg-amber-100 dark:bg-indigo-950/80 text-amber-900 dark:text-indigo-200 border border-amber-300/60 dark:border-indigo-700/60 rounded-full flex items-center gap-1 shadow-sm transition-all duration-300">
+                                🌅 Ban Mai Rực Rỡ
+                            </span>
                         </div>
-                        <p class="text-xs text-sky-900/70 dark:text-slate-400">Không gian nhận diện & lắng nghe nhịp điệu hoa cỏ</p>
+                        <p class="text-xs text-amber-900/70 dark:text-slate-400">Không gian nhận diện & lắng nghe nhịp điệu hoa cỏ</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <div class="flex items-center gap-1.5 bg-white/60 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-sky-200/60 dark:border-slate-800">
-                        <span class="text-[11px] text-sky-900/70 dark:text-slate-400 px-2 hidden sm:inline font-medium">Mẫu hoa:</span>
+                    <div class="flex items-center gap-1.5 bg-white/60 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-amber-200/60 dark:border-slate-800">
+                        <span class="text-[11px] text-amber-900/70 dark:text-slate-400 px-2 hidden sm:inline font-medium">Mẫu hoa:</span>
                         <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-purple-700 dark:text-purple-300 text-xs rounded-xl font-medium transition shadow-sm">Setosa</button>
                         <button onclick="applyPreset(5.2, 3.6, 4.2, 1.4)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-orange-600 dark:text-orange-300 text-xs rounded-xl font-medium transition shadow-sm">Versicolor</button>
                         <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 text-xs rounded-xl font-medium transition shadow-sm">Virginica</button>
                     </div>
 
-                    <button onclick="toggleTheme()" id="themeBtn" class="px-3 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-sky-900 dark:text-slate-200 rounded-2xl border border-sky-200/80 dark:border-slate-700 text-xs transition flex items-center gap-1.5 shadow-sm">
-                        <span id="themeIcon">☀️</span>
-                        <span id="themeText" class="hidden md:inline font-medium">Bầu Trời</span>
+                    <button onclick="toggleTheme()" id="themeBtn" class="px-3 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-1.5 shadow-sm">
+                        <span id="themeIcon">🌅</span>
+                        <span id="themeText" class="hidden md:inline font-medium">Ban Mai</span>
                     </button>
                 </div>
             </header>
@@ -196,63 +262,63 @@ def home():
                 
                 <!-- INPUT FORM CARD -->
                 <div class="lg:col-span-7 nature-card p-6 rounded-3xl space-y-6">
-                    <div class="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-800 pb-4">
-                        <h2 class="text-sm font-semibold text-sky-800 dark:text-sky-400 uppercase tracking-wider flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-sky-500 animate-pulse"></span> Thông Số Kích Thước Tự Nhiên
+                    <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-4">
+                        <h2 class="text-sm font-semibold text-amber-800 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Thông Số Kích Thước Tự Nhiên
                         </h2>
-                        <span class="text-xs text-sky-900/60 dark:text-slate-400 font-mono">Đơn vị: cm</span>
+                        <span class="text-xs text-amber-900/60 dark:text-slate-400 font-mono">Đơn vị: cm</span>
                     </div>
 
-                    <form id="irisForm" class="space-y-4">
+                    <form id="irisForm" onsubmit="submitForm(event)" class="space-y-4">
                         
                         <!-- Sepal Length -->
-                        <div class="p-3.5 bg-white/70 dark:bg-slate-900/40 rounded-2xl border border-sky-100 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800 transition">
+                        <div class="p-3.5 bg-white/80 dark:bg-slate-900/40 rounded-2xl border border-amber-100 dark:border-slate-800 hover:border-amber-300 dark:hover:border-indigo-800 transition">
                             <div class="grid grid-cols-12 gap-2 items-center">
                                 <span class="col-span-4 text-xs text-slate-700 dark:text-slate-300 font-medium">Đài hoa (Dài)</span>
                                 <div class="col-span-8 flex items-center gap-2">
-                                    <button type="button" onclick="adjustValue('sepal_length', -0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">-</button>
-                                    <input type="range" min="4.0" max="8.0" step="0.1" id="sepal_length" value="5.1" oninput="updateUI()" class="w-full accent-sky-600 dark:accent-sky-400 bg-sky-100 dark:bg-slate-800">
-                                    <button type="button" onclick="adjustValue('sepal_length', 0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">+</button>
-                                    <span id="sl_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-2 py-1 rounded-md border border-sky-200/50 dark:border-sky-900/50">5.1 cm</span>
+                                    <button type="button" onclick="adjustValue('sepal_length', -0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">-</button>
+                                    <input type="range" min="4.0" max="8.0" step="0.1" id="sepal_length" value="5.1" oninput="updateUI()" class="w-full accent-amber-500 dark:accent-indigo-400 bg-amber-100 dark:bg-slate-800">
+                                    <button type="button" onclick="adjustValue('sepal_length', 0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">+</button>
+                                    <span id="sl_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-amber-700 dark:text-indigo-400 bg-amber-50 dark:bg-slate-900/80 px-2 py-1 rounded-md border border-amber-200/50 dark:border-indigo-900/50">5.1 cm</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Sepal Width -->
-                        <div class="p-3.5 bg-white/70 dark:bg-slate-900/40 rounded-2xl border border-sky-100 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800 transition">
+                        <div class="p-3.5 bg-white/80 dark:bg-slate-900/40 rounded-2xl border border-amber-100 dark:border-slate-800 hover:border-amber-300 dark:hover:border-indigo-800 transition">
                             <div class="grid grid-cols-12 gap-2 items-center">
                                 <span class="col-span-4 text-xs text-slate-700 dark:text-slate-300 font-medium">Đài hoa (Rộng)</span>
                                 <div class="col-span-8 flex items-center gap-2">
-                                    <button type="button" onclick="adjustValue('sepal_width', -0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">-</button>
-                                    <input type="range" min="2.0" max="4.5" step="0.1" id="sepal_width" value="3.5" oninput="updateUI()" class="w-full accent-sky-600 dark:accent-sky-400 bg-sky-100 dark:bg-slate-800">
-                                    <button type="button" onclick="adjustValue('sepal_width', 0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">+</button>
-                                    <span id="sw_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-2 py-1 rounded-md border border-sky-200/50 dark:border-sky-900/50">3.5 cm</span>
+                                    <button type="button" onclick="adjustValue('sepal_width', -0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">-</button>
+                                    <input type="range" min="2.0" max="4.5" step="0.1" id="sepal_width" value="3.5" oninput="updateUI()" class="w-full accent-amber-500 dark:accent-indigo-400 bg-amber-100 dark:bg-slate-800">
+                                    <button type="button" onclick="adjustValue('sepal_width', 0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">+</button>
+                                    <span id="sw_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-amber-700 dark:text-indigo-400 bg-amber-50 dark:bg-slate-900/80 px-2 py-1 rounded-md border border-amber-200/50 dark:border-indigo-900/50">3.5 cm</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Petal Length -->
-                        <div class="p-3.5 bg-white/70 dark:bg-slate-900/40 rounded-2xl border border-sky-100 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800 transition">
+                        <div class="p-3.5 bg-white/80 dark:bg-slate-900/40 rounded-2xl border border-amber-100 dark:border-slate-800 hover:border-amber-300 dark:hover:border-indigo-800 transition">
                             <div class="grid grid-cols-12 gap-2 items-center">
                                 <span class="col-span-4 text-xs text-slate-700 dark:text-slate-300 font-medium">Cánh hoa (Dài)</span>
                                 <div class="col-span-8 flex items-center gap-2">
-                                    <button type="button" onclick="adjustValue('petal_length', -0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">-</button>
-                                    <input type="range" min="1.0" max="7.0" step="0.1" id="petal_length" value="1.4" oninput="updateUI()" class="w-full accent-sky-600 dark:accent-sky-400 bg-sky-100 dark:bg-slate-800">
-                                    <button type="button" onclick="adjustValue('petal_length', 0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">+</button>
-                                    <span id="pl_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-2 py-1 rounded-md border border-sky-200/50 dark:border-sky-900/50">1.4 cm</span>
+                                    <button type="button" onclick="adjustValue('petal_length', -0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">-</button>
+                                    <input type="range" min="1.0" max="7.0" step="0.1" id="petal_length" value="1.4" oninput="updateUI()" class="w-full accent-amber-500 dark:accent-indigo-400 bg-amber-100 dark:bg-slate-800">
+                                    <button type="button" onclick="adjustValue('petal_length', 0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">+</button>
+                                    <span id="pl_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-amber-700 dark:text-indigo-400 bg-amber-50 dark:bg-slate-900/80 px-2 py-1 rounded-md border border-amber-200/50 dark:border-indigo-900/50">1.4 cm</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Petal Width -->
-                        <div class="p-3.5 bg-white/70 dark:bg-slate-900/40 rounded-2xl border border-sky-100 dark:border-slate-800 hover:border-sky-300 dark:hover:border-sky-800 transition">
+                        <div class="p-3.5 bg-white/80 dark:bg-slate-900/40 rounded-2xl border border-amber-100 dark:border-slate-800 hover:border-amber-300 dark:hover:border-indigo-800 transition">
                             <div class="grid grid-cols-12 gap-2 items-center">
                                 <span class="col-span-4 text-xs text-slate-700 dark:text-slate-300 font-medium">Cánh hoa (Rộng)</span>
                                 <div class="col-span-8 flex items-center gap-2">
-                                    <button type="button" onclick="adjustValue('petal_width', -0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">-</button>
-                                    <input type="range" min="0.1" max="2.5" step="0.1" id="petal_width" value="0.2" oninput="updateUI()" class="w-full accent-sky-600 dark:accent-sky-400 bg-sky-100 dark:bg-slate-800">
-                                    <button type="button" onclick="adjustValue('petal_width', 0.1)" class="w-7 h-7 flex-none bg-sky-100 dark:bg-slate-800 hover:bg-sky-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-sky-900 dark:text-slate-300 transition">+</button>
-                                    <span id="pw_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-sky-700 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-2 py-1 rounded-md border border-sky-200/50 dark:border-sky-900/50">0.2 cm</span>
+                                    <button type="button" onclick="adjustValue('petal_width', -0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">-</button>
+                                    <input type="range" min="0.1" max="2.5" step="0.1" id="petal_width" value="0.2" oninput="updateUI()" class="w-full accent-amber-500 dark:accent-indigo-400 bg-amber-100 dark:bg-slate-800">
+                                    <button type="button" onclick="adjustValue('petal_width', 0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">+</button>
+                                    <span id="pw_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-amber-700 dark:text-indigo-400 bg-amber-50 dark:bg-slate-900/80 px-2 py-1 rounded-md border border-amber-200/50 dark:border-indigo-900/50">0.2 cm</span>
                                 </div>
                             </div>
                         </div>
@@ -267,8 +333,8 @@ def home():
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full py-4 bg-sky-600 hover:bg-sky-700 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold rounded-2xl shadow-lg shadow-sky-500/20 dark:shadow-none transition duration-300 active:scale-[0.99] flex items-center justify-center gap-2 tracking-wide mt-2">
-                            <svg class="w-5 h-5 text-sky-200 dark:text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-600 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold rounded-2xl shadow-lg shadow-amber-500/25 dark:shadow-none transition duration-300 active:scale-[0.99] flex items-center justify-center gap-2 tracking-wide mt-2">
+                            <svg class="w-5 h-5 text-amber-100 dark:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             PHÂN TÍCH & DỰ ĐOÁN
                         </button>
                     </form>
@@ -279,15 +345,15 @@ def home():
                     
                     <!-- SVG Visualizer -->
                     <div class="nature-card p-5 rounded-3xl space-y-3 text-center relative overflow-hidden">
-                        <div class="flex justify-between items-center text-xs text-sky-900/60 dark:text-slate-400">
+                        <div class="flex justify-between items-center text-xs text-amber-900/60 dark:text-slate-400">
                             <span>MÔ PHỎNG HÌNH DÁNG HẠT & CÁNH</span>
-                            <span class="text-sky-700 dark:text-sky-400 font-medium">Trực Quan</span>
+                            <span class="text-amber-700 dark:text-indigo-400 font-medium">Trực Quan</span>
                         </div>
-                        <div class="h-32 bg-white/50 dark:bg-slate-950/50 rounded-2xl flex items-center justify-center relative border border-sky-100 dark:border-slate-800">
+                        <div class="h-32 bg-white/60 dark:bg-slate-950/50 rounded-2xl flex items-center justify-center relative border border-amber-100 dark:border-slate-800">
                             <svg id="flowerSvg" class="transition-all duration-500 filter drop-shadow-md" width="100" height="100" viewBox="-50 -50 100 100">
-                                <ellipse id="svgSepal" cx="0" cy="0" rx="20" ry="40" fill="#0284c7" opacity="0.35" stroke="#0369a1" stroke-width="1"/>
-                                <ellipse id="svgSepal2" cx="0" cy="0" rx="40" ry="20" fill="#0284c7" opacity="0.35" stroke="#0369a1" stroke-width="1"/>
-                                <circle id="svgPetal" cx="0" cy="0" r="15" fill="#38bdf8" opacity="0.75" stroke="#0284c7" stroke-width="1.5"/>
+                                <ellipse id="svgSepal" cx="0" cy="0" rx="20" ry="40" fill="#f59e0b" opacity="0.35" stroke="#d97706" stroke-width="1"/>
+                                <ellipse id="svgSepal2" cx="0" cy="0" rx="40" ry="20" fill="#f59e0b" opacity="0.35" stroke="#d97706" stroke-width="1"/>
+                                <circle id="svgPetal" cx="0" cy="0" r="15" fill="#fbbf24" opacity="0.75" stroke="#f59e0b" stroke-width="1.5"/>
                             </svg>
                         </div>
                     </div>
@@ -295,36 +361,36 @@ def home():
                     <!-- Prediction Result Card -->
                     <div id="resultCard" class="nature-card p-6 rounded-3xl text-center space-y-4 transition-all duration-300">
                         <div class="space-y-1">
-                            <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">🌤️</div>
-                            <h3 id="resultName" class="text-2xl font-bold font-serif text-sky-950 dark:text-slate-100">Sẵn Sàng Khám Phá</h3>
-                            <p id="resultDesc" class="text-xs text-sky-900/70 dark:text-slate-400">Điều chỉnh thông số và bấm để lắng nghe kết quả</p>
+                            <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">🌅</div>
+                            <h3 id="resultName" class="text-2xl font-bold font-serif text-amber-950 dark:text-slate-100">Sẵn Sàng Khám Phá</h3>
+                            <p id="resultDesc" class="text-xs text-amber-900/70 dark:text-slate-400">Điều chỉnh thông số và bấm để lắng nghe kết quả</p>
                         </div>
 
-                        <div id="careBox" class="hidden p-4 bg-white/80 dark:bg-slate-900/80 border border-sky-200 dark:border-sky-900/40 rounded-2xl text-left text-xs text-slate-700 dark:text-slate-300 space-y-2">
-                            <span class="font-semibold text-sky-800 dark:text-sky-400 text-[11px] uppercase tracking-wider block border-b border-sky-100 dark:border-slate-800 pb-1">🌱 Đặc tính & Mẹo Chăm Sóc</span>
+                        <div id="careBox" class="hidden p-4 bg-white/80 dark:bg-slate-900/80 border border-amber-200 dark:border-indigo-900/40 rounded-2xl text-left text-xs text-slate-700 dark:text-slate-300 space-y-2">
+                            <span class="font-semibold text-amber-800 dark:text-indigo-400 text-[11px] uppercase tracking-wider block border-b border-amber-100 dark:border-slate-800 pb-1">🌱 Đặc tính & Mẹo Chăm Sóc</span>
                             <p id="careTipsText" class="leading-relaxed"></p>
                         </div>
 
                         <!-- Confidence Bars -->
-                        <div id="probBars" class="space-y-2.5 text-left hidden pt-3 border-t border-sky-200/60 dark:border-slate-800">
-                            <span class="text-[10px] font-semibold text-sky-900/50 dark:text-slate-400 uppercase tracking-widest block">Mức độ tương thích</span>
+                        <div id="probBars" class="space-y-2.5 text-left hidden pt-3 border-t border-amber-200/60 dark:border-slate-800">
+                            <span class="text-[10px] font-semibold text-amber-900/50 dark:text-slate-400 uppercase tracking-widest block">Mức độ tương thích</span>
                             
                             <div class="space-y-1">
                                 <div class="flex justify-between text-xs"><span>Iris-setosa</span><span id="prob0" class="text-purple-600 dark:text-purple-400 font-bold">0%</span></div>
-                                <div class="w-full bg-sky-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="w-full bg-amber-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                                     <div id="bar0" class="bg-purple-500 h-full w-0 transition-all duration-500 rounded-full"></div>
                                 </div>
                             </div>
                             <div class="space-y-1">
                                 <div class="flex justify-between text-xs"><span>Iris-versicolor</span><span id="prob1" class="text-orange-500 dark:text-orange-400 font-bold">0%</span></div>
-                                <div class="w-full bg-sky-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                <div class="w-full bg-amber-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
                                     <div id="bar1" class="bg-orange-400 h-full w-0 transition-all duration-500 rounded-full"></div>
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <div class="flex justify-between text-xs"><span>Iris-virginica</span><span id="prob2" class="text-sky-600 dark:text-sky-400 font-bold">0%</span></div>
-                                <div class="w-full bg-sky-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                                    <div id="bar2" class="bg-sky-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                                <div class="flex justify-between text-xs"><span>Iris-virginica</span><span id="prob2" class="text-amber-600 dark:text-sky-400 font-bold">0%</span></div>
+                                <div class="w-full bg-amber-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div id="bar2" class="bg-amber-500 h-full w-0 transition-all duration-500 rounded-full"></div>
                                 </div>
                             </div>
                         </div>
@@ -337,14 +403,14 @@ def home():
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 <!-- Reference Table -->
                 <div class="lg:col-span-6 nature-card p-5 rounded-3xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-800 pb-3">
-                        <h3 class="text-xs font-semibold text-sky-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                    <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
+                        <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
                             <span>📖</span> Bảng Chỉ Số Tham Chiếu Tự Nhiên
                         </h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono">
-                            <thead class="text-sky-900/50 dark:text-slate-400 border-b border-sky-200/60 dark:border-slate-800 uppercase text-[10px]">
+                            <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
                                 <tr>
                                     <th class="pb-2">Loài Hoa</th>
                                     <th class="pb-2">Đài (Dài)</th>
@@ -353,7 +419,7 @@ def home():
                                     <th class="pb-2">Cánh (Rộng)</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-sky-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                            <tbody class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
                                 <tr>
                                     <td class="py-2.5 font-bold text-purple-600 dark:text-purple-400">Setosa</td>
                                     <td>4.3 - 5.8</td>
@@ -369,7 +435,7 @@ def home():
                                     <td>1.0 - 1.8</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-2.5 font-bold text-sky-600 dark:text-sky-400">Virginica</td>
+                                    <td class="py-2.5 font-bold text-amber-600 dark:text-indigo-400">Virginica</td>
                                     <td>4.9 - 7.9</td>
                                     <td>2.2 - 3.8</td>
                                     <td>4.5 - 6.9</td>
@@ -382,25 +448,25 @@ def home():
 
                 <!-- History Logs -->
                 <div class="lg:col-span-6 nature-card p-5 rounded-3xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-sky-200/60 dark:border-slate-800 pb-3">
-                        <h3 class="text-xs font-semibold text-sky-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                    <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
+                        <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
                             <span>📜</span> Nhật Ký Quan Sát Thiên Nhiên
                         </h3>
-                        <button onclick="clearHistory()" class="px-2.5 py-1 bg-sky-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 text-[11px] rounded-lg font-mono transition">
+                        <button onclick="clearHistory()" class="px-2.5 py-1 bg-amber-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 text-[11px] rounded-lg font-mono transition">
                             Xóa Lịch Sử
                         </button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-xs font-mono">
-                            <thead class="text-sky-900/50 dark:text-slate-400 border-b border-sky-200/60 dark:border-slate-800 uppercase text-[10px]">
+                            <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
                                 <tr>
                                     <th class="pb-2">Kết quả</th>
                                     <th class="pb-2">Đài (DxR)</th>
                                     <th class="pb-2">Cánh (DxR)</th>
                                 </tr>
                             </thead>
-                            <tbody id="historyTable" class="divide-y divide-sky-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                                <tr><td colspan="3" class="py-4 text-center text-sky-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>
+                            <tbody id="historyTable" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                                <tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -412,19 +478,65 @@ def home():
         <script>
             let historyData = [];
 
+            // Sinh ngẫu nhiên hạt sáng / bụi nắng lơ lửng cho Giao diện Ban Mai
+            function createSunParticles() {
+                const container = document.getElementById('sunParticles');
+                if (!container) return;
+                container.innerHTML = '';
+                const particleCount = 45;
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'sun-particle';
+                    const size = Math.random() * 5 + 2; // Kích thước hạt từ 2px - 7px
+                    p.style.width = `${size}px`;
+                    p.style.height = `${size}px`;
+                    p.style.top = `${Math.random() * 100 + 10}%`;
+                    p.style.left = `${Math.random() * 100}%`;
+                    p.style.setProperty('--duration', `${Math.random() * 8 + 6}s`);
+                    p.style.setProperty('--delay', `${Math.random() * 5}s`);
+                    p.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
+                    container.appendChild(p);
+                }
+            }
+
+            // Sinh ngẫu nhiên các ngôi sao cho Chế độ Đêm
+            function createStars() {
+                const container = document.getElementById('stars');
+                if (!container) return;
+                container.innerHTML = '';
+                const starCount = 65;
+                
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    const size = Math.random() * 2.5 + 1;
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.setProperty('--duration', `${Math.random() * 3 + 1.5}s`);
+                    star.style.setProperty('--delay', `${Math.random() * 3}s`);
+                    container.appendChild(star);
+                }
+            }
+
             function toggleTheme() {
                 const html = document.documentElement;
                 const icon = document.getElementById('themeIcon');
                 const text = document.getElementById('themeText');
+                const badge = document.getElementById('skyBadge');
                 
                 if (html.classList.contains('dark')) {
                     html.classList.remove('dark');
-                    icon.textContent = '☀️';
-                    text.textContent = 'Bầu Trời';
+                    icon.textContent = '🌅';
+                    text.textContent = 'Ban Mai';
+                    badge.innerHTML = '🌅 Ban Mai Rực Rỡ';
                 } else {
                     html.classList.add('dark');
                     icon.textContent = '🌙';
-                    text.textContent = 'Ban Đêm';
+                    text.textContent = 'Đêm Sao';
+                    badge.innerHTML = '✨ Bầu trời đêm nhiều sao';
                 }
             }
 
@@ -458,46 +570,54 @@ def home():
                 document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
                 document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
 
-                document.getElementById('svgSepal').setAttribute('ry', sl * 5.5);
-                document.getElementById('svgSepal').setAttribute('rx', sw * 5.5);
-                document.getElementById('svgSepal2').setAttribute('rx', sl * 5.5);
-                document.getElementById('svgSepal2').setAttribute('ry', sw * 5.5);
-                document.getElementById('svgPetal').setAttribute('r', (pl + pw) * 3.8);
+                // Cập nhật mô phỏng hoa dạng SVG Trực Quan
+                const svgSepal = document.getElementById('svgSepal');
+                const svgSepal2 = document.getElementById('svgSepal2');
+                const svgPetal = document.getElementById('svgPetal');
 
-                const warnBox = document.getElementById('warningBox');
-                let anomalies = [];
+                svgSepal.setAttribute('rx', (sw * 6).toFixed(1));
+                svgSepal.setAttribute('ry', (sl * 6).toFixed(1));
+                svgSepal2.setAttribute('rx', (sl * 6).toFixed(1));
+                svgSepal2.setAttribute('ry', (sw * 6).toFixed(1));
+                svgPetal.setAttribute('r', (pl * 4 + pw * 3).toFixed(1));
 
-                if (pw > sw) anomalies.push("Chiều rộng cánh hoa lớn hơn chiều rộng đài hoa.");
-                if (sw > sl) anomalies.push("Chiều rộng đài hoa vượt quá chiều dài đài.");
-                if (pl > sl * 1.15) anomalies.push("Cánh hoa dài bất thường so với đài.");
+                // Cảnh báo kích thước dị thường
+                const warningBox = document.getElementById('warningBox');
+                const warningText = document.getElementById('warningText');
 
-                if (anomalies.length > 0) {
-                    warnBox.classList.remove('hidden');
-                    document.getElementById('warningText').textContent = anomalies.join(" ");
+                if (pl < pw) {
+                    warningText.textContent = 'Cánh hoa dài nhỏ hơn cánh hoa rộng là trường hợp hiếm gặp trong tự nhiên.';
+                    warningBox.classList.remove('hidden');
+                } else if (sl < pl && sw < pw) {
+                    warningText.textContent = 'Cánh hoa lớn hơn hẳn đài hoa, kích thước loài hoa này phát triển rất đặc biệt.';
+                    warningBox.classList.remove('hidden');
                 } else {
-                    warnBox.classList.add('hidden');
+                    warningBox.classList.add('hidden');
                 }
             }
 
-            document.getElementById('irisForm').addEventListener('submit', async (e) => {
+            async function submitForm(e) {
                 e.preventDefault();
-                
-                const payload = {
-                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
-                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
-                    petal_length: parseFloat(document.getElementById('petal_length').value),
-                    petal_width: parseFloat(document.getElementById('petal_width').value)
-                };
+                const sl = parseFloat(document.getElementById('sepal_length').value);
+                const sw = parseFloat(document.getElementById('sepal_width').value);
+                const pl = parseFloat(document.getElementById('petal_length').value);
+                const pw = parseFloat(document.getElementById('petal_width').value);
 
                 try {
                     const res = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify({
+                            sepal_length: sl,
+                            sepal_width: sw,
+                            petal_length: pl,
+                            petal_width: pw
+                        })
                     });
+
                     const data = await res.json();
 
-                    // Render Result
+                    // Hiển thị kết quả
                     document.getElementById('resultIcon').textContent = data.icon;
                     document.getElementById('resultName').textContent = data.prediction;
                     document.getElementById('resultName').style.color = data.color;
@@ -506,53 +626,56 @@ def home():
                     document.getElementById('careTipsText').textContent = data.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
-                    // Render Probabilities
+                    // Hiển thị thanh xác suất
                     document.getElementById('probBars').classList.remove('hidden');
                     data.probabilities.forEach((p, idx) => {
-                        const pct = Math.round(p * 100);
-                        document.getElementById(`prob${idx}`).textContent = `${pct}%`;
-                        document.getElementById(`bar${idx}`).style.width = `${pct}%`;
+                        const percent = (p * 100).toFixed(1) + '%';
+                        document.getElementById(`prob${idx}`).textContent = percent;
+                        document.getElementById(`bar${idx}`).style.width = percent;
                     });
 
-                    // Confetti Effect
-                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+                    // Hiệu ứng pháo hoa Confetti chúc mừng
+                    if (window.confetti) {
+                        confetti({
+                            particleCount: 50,
+                            spread: 60,
+                            origin: { y: 0.75 }
+                        });
+                    }
 
-                    // Log History
-                    historyData.unshift({
-                        name: data.prediction,
-                        icon: data.icon,
-                        sepal: `${payload.sepal_length}x${payload.sepal_width}`,
-                        petal: `${payload.petal_length}x${payload.petal_width}`
-                    });
-                    renderHistory();
+                    // Lưu lịch sử
+                    addHistory(data.prediction, sl, sw, pl, pw);
 
                 } catch (err) {
-                    alert("Không thể kết nối với máy chủ dự đoán.");
+                    console.error("Lỗi dự đoán:", err);
                 }
-            });
+            }
 
-            function renderHistory() {
+            function addHistory(name, sl, sw, pl, pw) {
+                historyData.unshift({ name, sl, sw, pl, pw });
+                if (historyData.length > 5) historyData.pop();
+
                 const tbody = document.getElementById('historyTable');
-                if (historyData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="3" class="py-4 text-center text-sky-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>';
-                    return;
-                }
-                tbody.innerHTML = historyData.slice(0, 5).map(item => `
-                    <tr>
-                        <td class="py-2 font-bold">${item.icon} ${item.name}</td>
-                        <td class="py-2">${item.sepal}</td>
-                        <td class="py-2">${item.petal}</td>
+                tbody.innerHTML = historyData.map(item => `
+                    <tr class="hover:bg-amber-500/10 dark:hover:bg-slate-800/40 transition">
+                        <td class="py-2 font-bold" style="color: ${item.name === 'Iris-setosa' ? '#8b5cf6' : item.name === 'Iris-versicolor' ? '#fb923c' : '#f59e0b'}">${item.name}</td>
+                        <td class="py-2">${item.sl} × ${item.sw}</td>
+                        <td class="py-2">${item.pl} × ${item.pw}</td>
                     </tr>
                 `).join('');
             }
 
             function clearHistory() {
                 historyData = [];
-                renderHistory();
+                document.getElementById('historyTable').innerHTML = `<tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>`;
             }
 
-            // Init UI
-            updateUI();
+            // Khởi tạo
+            window.addEventListener('DOMContentLoaded', () => {
+                createSunParticles();
+                createStars();
+                updateUI();
+            });
         </script>
     </body>
     </html>
