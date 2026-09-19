@@ -101,7 +101,7 @@ def home():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Iris Flowers - Ban Mai Rực Rỡ</title>
+        <title>Iris Flowers - Ánh Bình Minh & Bầu Trời Tinh Tú</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -121,18 +121,19 @@ def home():
             }
         </script>
         <style>
-            /* Giao diện sáng: Ban Mai Rực Rỡ (Bình minh ấm áp, vàng cam & hồng phấn) */
+            /* GIAO DIỆN BAN MAI: Ánh bình minh rực rỡ */
             body {
                 background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 35%, #fed7aa 70%, #fef3c7 100%);
                 background-attachment: fixed;
             }
-            /* Giao diện tối: Đêm lấp lánh nhiều sao */
+            /* GIAO DIỆN BAN ĐÊM: Bầu trời tinh tú đầy sao */
             .dark body {
-                background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
+                background: linear-gradient(135deg, #030712 0%, #0b132b 40%, #1c2541 100%);
                 background-attachment: fixed;
             }
+
             .nature-card {
-                background: rgba(255, 255, 255, 0.72);
+                background: rgba(255, 255, 255, 0.75);
                 backdrop-filter: blur(20px);
                 border: 1px solid rgba(255, 255, 255, 0.9);
                 box-shadow: 0 10px 35px -10px rgba(251, 146, 60, 0.2);
@@ -142,81 +143,119 @@ def home():
                 border: 1px solid rgba(255, 255, 255, 0.12);
                 box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
             }
+
             input[type=range] {
                 height: 6px;
                 border-radius: 9999px;
             }
 
-            /* --- Bầu trời đêm nhiều sao --- */
+            /* --- BAN MAI: NẮNG CHIẾU & HẠT SÁNG --- */
+            .sunlight-container { display: block; }
+            .dark .sunlight-container { display: none; }
+
+            .sun-core {
+                position: absolute;
+                top: -120px;
+                left: -120px;
+                width: 550px;
+                height: 550px;
+                background: radial-gradient(circle, rgba(254, 240, 138, 0.95) 0%, rgba(251, 146, 60, 0.55) 45%, rgba(255, 255, 255, 0) 70%);
+                border-radius: 50%;
+                filter: blur(35px);
+                animation: sunPulse 6s infinite ease-in-out alternate;
+            }
+            @keyframes sunPulse {
+                0% { transform: scale(0.9) rotate(0deg); opacity: 0.85; }
+                100% { transform: scale(1.15) rotate(15deg); opacity: 1; }
+            }
+
+            .sun-ray {
+                position: absolute;
+                top: -20%;
+                left: -10%;
+                width: 150vw;
+                height: 150vh;
+                background: repeating-conic-gradient(
+                    from 0deg at 10% 10%,
+                    rgba(253, 224, 71, 0.2) 0deg 15deg,
+                    transparent 15deg 30deg
+                );
+                filter: blur(10px);
+                pointer-events: none;
+                animation: rayRotate 70s linear infinite;
+            }
+            @keyframes rayRotate {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+
+            .sun-particle {
+                position: absolute;
+                background: radial-gradient(circle, #ffffff 0%, #fde047 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 10px rgba(251, 146, 60, 0.8);
+                animation: floatUp var(--duration, 8s) infinite ease-in-out var(--delay, 0s);
+            }
+            @keyframes floatUp {
+                0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+                20% { opacity: 0.9; }
+                80% { opacity: 0.9; }
+                100% { transform: translateY(-110vh) translateX(var(--drift, 40px)) scale(1.3); opacity: 0; }
+            }
+
+            /* --- BAN ĐÊM: BẦU TRỜI TINH TÚ & SAO BĂNG --- */
             .stars-container { display: none; }
             .dark .stars-container { display: block; }
+            
             .star {
                 position: absolute;
                 background-color: #ffffff;
                 border-radius: 50%;
-                opacity: 0.3;
                 animation: twinkle var(--duration, 3s) infinite ease-in-out var(--delay, 0s);
             }
             @keyframes twinkle {
                 0%, 100% { opacity: 0.2; transform: scale(0.8); }
-                50% { opacity: 1; transform: scale(1.4); box-shadow: 0 0 8px rgba(255, 255, 255, 0.9); }
+                50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 10px rgba(255, 255, 255, 1); }
             }
 
-            /* --- Giao diện Ban Mai Rực Rỡ: Hiệu ứng Tia Nắng & Hạt Sáng Float --- */
-            .sunlight-container { display: block; }
-            .dark .sunlight-container { display: none; }
-
-            /* Tia nắng bừng sáng từ góc trên trái */
-            .sun-beam {
+            /* Sao băng rơi rực rỡ */
+            .shooting-star {
                 position: absolute;
-                top: -150px;
-                left: -100px;
-                width: 600px;
-                height: 600px;
-                background: radial-gradient(circle, rgba(253,224,71,0.45) 0%, rgba(251,146,60,0.2) 40%, rgba(255,255,255,0) 70%);
-                border-radius: 50%;
-                filter: blur(40px);
-                animation: pulseBeam 8s infinite ease-in-out alternate;
+                height: 2px;
+                background: linear-gradient(-45deg, rgba(255, 255, 255, 1), rgba(147, 197, 253, 0.8), rgba(255, 255, 255, 0));
+                border-radius: 999px;
+                filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.9));
+                animation: tail var(--speed, 3s) ease-in-out infinite var(--delay, 0s), shooting var(--speed, 3s) ease-in-out infinite var(--delay, 0s);
+                opacity: 0;
             }
-            @keyframes pulseBeam {
-                0% { transform: scale(0.95) translate(0, 0); opacity: 0.8; }
-                100% { transform: scale(1.15) translate(20px, 20px); opacity: 1; }
+            @keyframes tail {
+                0% { width: 0; }
+                30% { width: 140px; }
+                100% { width: 0; }
             }
-
-            /* Hạt bụi nắng lơ lửng */
-            .sun-particle {
-                position: absolute;
-                background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(254,215,170,0.8) 100%);
-                border-radius: 50%;
-                box-shadow: 0 0 10px rgba(251,146,60,0.5);
-                animation: floatUp var(--duration, 10s) infinite ease-in-out var(--delay, 0s);
-            }
-            @keyframes floatUp {
-                0% {
-                    transform: translateY(0) translateX(0) scale(0.8);
-                    opacity: 0;
-                }
-                20% { opacity: 0.8; }
-                80% { opacity: 0.8; }
-                100% {
-                    transform: translateY(-120vh) translateX(var(--drift, 30px)) scale(1.2);
-                    opacity: 0;
-                }
+            @keyframes shooting {
+                0% { transform: translateX(0) translateY(0) rotate(-35deg); opacity: 1; }
+                70% { opacity: 1; }
+                100% { transform: translateX(-900px) translateY(600px) rotate(-35deg); opacity: 0; }
             }
         </style>
     </head>
-    <body class="text-slate-800 dark:text-slate-100 font-sans min-h-screen p-4 md:p-8 transition-colors duration-500">
+    <body class="text-slate-800 dark:text-slate-100 font-sans min-h-screen p-4 md:p-8 transition-colors duration-500 overflow-x-hidden">
         
-        <!-- HIỆU ỨNG GIAO DIỆN BAN MAI RỰC RỠ (Chỉ hiện khi ở Chế độ Sáng) -->
+        <!-- HIỆU ỨNG GIAO DIỆN BAN MAI (Tia nắng chiếu vào) -->
         <div id="sunlight" class="sunlight-container fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div class="sun-beam"></div>
+            <div class="sun-core"></div>
+            <div class="sun-ray"></div>
             <div class="absolute top-1/4 right-10 w-96 h-96 bg-amber-200/40 rounded-full blur-3xl"></div>
             <div class="absolute bottom-10 left-1/3 w-80 h-80 bg-rose-200/30 rounded-full blur-3xl"></div>
             <div id="sunParticles"></div>
         </div>
 
-        <!-- HIỆU ỨNG BẦU TRỜI ĐÊM NHIỀU SAO (Chỉ hiện khi ở Chế độ Tối) -->
-        <div id="stars" class="stars-container fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+        <!-- HIỆU ỨNG GIAO DIỆN BAN ĐÊM (Bầu trời tinh tú & Sao băng) -->
+        <div id="stars" class="stars-container fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            <div id="starsList"></div>
+            <div id="shootingStarsList"></div>
+        </div>
 
         <div class="max-w-6xl mx-auto space-y-6 relative z-10">
             
@@ -232,27 +271,25 @@ def home():
                     <div>
                         <div class="flex items-center gap-2.5">
                             <h1 class="text-xl font-bold font-serif tracking-wide text-amber-950 dark:text-slate-50">IRIS FLOWERS</h1>
-                            
-                            <!-- Badge Tiêu đề -->
                             <span id="skyBadge" class="px-3 py-0.5 text-[11px] font-semibold bg-amber-100 dark:bg-indigo-950/80 text-amber-900 dark:text-indigo-200 border border-amber-300/60 dark:border-indigo-700/60 rounded-full flex items-center gap-1 shadow-sm transition-all duration-300">
-                                🌅 Ban Mai Rực Rỡ
+                                🌅 Ánh bình minh
                             </span>
                         </div>
-                        <p class="text-xs text-amber-900/70 dark:text-slate-400">Không gian nhận diện & lắng nghe nhịp điệu hoa cỏ</p>
+                        <p id="subHeadline" class="text-xs text-amber-900/70 dark:text-slate-400">Như tia nắng ban mai chiếu qua không gian nhận diện hoa</p>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-3">
                     <div class="flex items-center gap-1.5 bg-white/60 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-amber-200/60 dark:border-slate-800">
                         <span class="text-[11px] text-amber-900/70 dark:text-slate-400 px-2 hidden sm:inline font-medium">Mẫu hoa:</span>
-                        <button onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-purple-700 dark:text-purple-300 text-xs rounded-xl font-medium transition shadow-sm">Setosa</button>
-                        <button onclick="applyPreset(5.2, 3.6, 4.2, 1.4)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-orange-600 dark:text-orange-300 text-xs rounded-xl font-medium transition shadow-sm">Versicolor</button>
-                        <button onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 text-xs rounded-xl font-medium transition shadow-sm">Virginica</button>
+                        <button type="button" onclick="applyPreset(5.1, 3.5, 1.4, 0.2)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-purple-700 dark:text-purple-300 text-xs rounded-xl font-medium transition shadow-sm">Setosa</button>
+                        <button type="button" onclick="applyPreset(5.9, 2.8, 4.3, 1.3)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-orange-600 dark:text-orange-300 text-xs rounded-xl font-medium transition shadow-sm">Versicolor</button>
+                        <button type="button" onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 text-xs rounded-xl font-medium transition shadow-sm">Virginica</button>
                     </div>
 
-                    <button onclick="toggleTheme()" id="themeBtn" class="px-3 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-1.5 shadow-sm">
+                    <button type="button" onclick="toggleTheme()" id="themeBtn" class="px-3.5 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-2 shadow-sm font-semibold">
                         <span id="themeIcon">🌅</span>
-                        <span id="themeText" class="hidden md:inline font-medium">Ban Mai</span>
+                        <span id="themeText">Ban Mai</span>
                     </button>
                 </div>
             </header>
@@ -270,7 +307,6 @@ def home():
                     </div>
 
                     <form id="irisForm" onsubmit="submitForm(event)" class="space-y-4">
-                        
                         <!-- Sepal Length -->
                         <div class="p-3.5 bg-white/80 dark:bg-slate-900/40 rounded-2xl border border-amber-100 dark:border-slate-800 hover:border-amber-300 dark:hover:border-indigo-800 transition">
                             <div class="grid grid-cols-12 gap-2 items-center">
@@ -333,8 +369,8 @@ def home():
                         </div>
 
                         <!-- Submit Button -->
-                        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-600 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold rounded-2xl shadow-lg shadow-amber-500/25 dark:shadow-none transition duration-300 active:scale-[0.99] flex items-center justify-center gap-2 tracking-wide mt-2">
-                            <svg class="w-5 h-5 text-amber-100 dark:text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <button type="submit" class="w-full py-4 bg-amber-500 hover:bg-amber-600 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-lg shadow-amber-500/25 dark:shadow-indigo-600/30 transition duration-300 active:scale-[0.99] flex items-center justify-center gap-2 tracking-wide mt-2">
+                            <svg class="w-5 h-5 text-amber-100 dark:text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                             PHÂN TÍCH & DỰ ĐOÁN
                         </button>
                     </form>
@@ -342,7 +378,6 @@ def home():
 
                 <!-- PREVIEW & RESULT CARD -->
                 <div class="lg:col-span-5 space-y-6">
-                    
                     <!-- SVG Visualizer -->
                     <div class="nature-card p-5 rounded-3xl space-y-3 text-center relative overflow-hidden">
                         <div class="flex justify-between items-center text-xs text-amber-900/60 dark:text-slate-400">
@@ -395,160 +430,168 @@ def home():
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
-            <!-- REFERENCE & LOGS -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- Reference Table -->
-                <div class="lg:col-span-6 nature-card p-5 rounded-3xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
-                        <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <span>📖</span> Bảng Chỉ Số Tham Chiếu Tự Nhiên
-                        </h3>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono">
-                            <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
-                                <tr>
-                                    <th class="pb-2">Loài Hoa</th>
-                                    <th class="pb-2">Đài (Dài)</th>
-                                    <th class="pb-2">Đài (Rộng)</th>
-                                    <th class="pb-2">Cánh (Dài)</th>
-                                    <th class="pb-2">Cánh (Rộng)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                                <tr>
-                                    <td class="py-2.5 font-bold text-purple-600 dark:text-purple-400">Setosa</td>
-                                    <td>4.3 - 5.8</td>
-                                    <td>2.3 - 4.4</td>
-                                    <td>1.0 - 1.9</td>
-                                    <td>0.1 - 0.6</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 font-bold text-orange-500 dark:text-orange-400">Versicolor</td>
-                                    <td>4.9 - 7.0</td>
-                                    <td>2.0 - 3.4</td>
-                                    <td>3.0 - 5.1</td>
-                                    <td>1.0 - 1.8</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-2.5 font-bold text-amber-600 dark:text-indigo-400">Virginica</td>
-                                    <td>4.9 - 7.9</td>
-                                    <td>2.2 - 3.8</td>
-                                    <td>4.5 - 6.9</td>
-                                    <td>1.4 - 2.5</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+            <!-- REFERENCE TABLE -->
+            <div class="nature-card p-5 rounded-3xl space-y-4">
+                <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
+                    <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                        <span>📖</span> Bảng Chỉ Số Tham Chiếu Tự Nhiên
+                    </h3>
                 </div>
-
-                <!-- History Logs -->
-                <div class="lg:col-span-6 nature-card p-5 rounded-3xl space-y-4">
-                    <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
-                        <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                            <span>📜</span> Nhật Ký Quan Sát Thiên Nhiên
-                        </h3>
-                        <button onclick="clearHistory()" class="px-2.5 py-1 bg-amber-100 dark:bg-slate-800 hover:bg-rose-100 dark:hover:bg-rose-950/50 text-rose-600 dark:text-rose-400 text-[11px] rounded-lg font-mono transition">
-                            Xóa Lịch Sử
-                        </button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs font-mono">
-                            <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
-                                <tr>
-                                    <th class="pb-2">Kết quả</th>
-                                    <th class="pb-2">Đài (DxR)</th>
-                                    <th class="pb-2">Cánh (DxR)</th>
-                                </tr>
-                            </thead>
-                            <tbody id="historyTable" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                                <tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
+                            <tr>
+                                <th class="pb-2">Loài Hoa</th>
+                                <th class="pb-2">Đài (Dài)</th>
+                                <th class="pb-2">Đài (Rộng)</th>
+                                <th class="pb-2">Cánh (Dài)</th>
+                                <th class="pb-2">Cánh (Rộng)</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                            <tr>
+                                <td class="py-2.5 font-bold text-purple-600 dark:text-purple-400">Setosa</td>
+                                <td>4.3 - 5.8 cm</td>
+                                <td>2.3 - 4.4 cm</td>
+                                <td>1.0 - 1.9 cm</td>
+                                <td>0.1 - 0.6 cm</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 font-bold text-orange-500 dark:text-orange-400">Versicolor</td>
+                                <td>4.9 - 7.0 cm</td>
+                                <td>2.0 - 3.4 cm</td>
+                                <td>3.0 - 5.1 cm</td>
+                                <td>1.0 - 1.8 cm</td>
+                            </tr>
+                            <tr>
+                                <td class="py-2.5 font-bold text-amber-600 dark:text-sky-400">Virginica</td>
+                                <td>4.9 - 7.9 cm</td>
+                                <td>2.2 - 3.8 cm</td>
+                                <td>4.5 - 6.9 cm</td>
+                                <td>1.4 - 2.5 cm</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
         </div>
 
         <script>
-            let historyData = [];
-
-            // Sinh ngẫu nhiên hạt sáng / bụi nắng lơ lửng cho Giao diện Ban Mai
-            function createSunParticles() {
-                const container = document.getElementById('sunParticles');
-                if (!container) return;
-                container.innerHTML = '';
-                const particleCount = 45;
-                
-                for (let i = 0; i < particleCount; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'sun-particle';
-                    const size = Math.random() * 5 + 2; // Kích thước hạt từ 2px - 7px
-                    p.style.width = `${size}px`;
-                    p.style.height = `${size}px`;
-                    p.style.top = `${Math.random() * 100 + 10}%`;
-                    p.style.left = `${Math.random() * 100}%`;
-                    p.style.setProperty('--duration', `${Math.random() * 8 + 6}s`);
-                    p.style.setProperty('--delay', `${Math.random() * 5}s`);
-                    p.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
-                    container.appendChild(p);
+            // Khởi tạo các hiệu ứng tĩnh (Hạt nắng, Tinh tú, Sao băng)
+            function initEffects() {
+                // 1. Tạo hạt bụi nắng cho Ban Mai
+                const sunParticlesContainer = document.getElementById('sunParticles');
+                for (let i = 0; i < 25; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'sun-particle';
+                    const size = Math.random() * 6 + 3;
+                    particle.style.width = size + 'px';
+                    particle.style.height = size + 'px';
+                    particle.style.left = Math.random() * 100 + 'vw';
+                    particle.style.bottom = '-20px';
+                    particle.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
+                    particle.style.setProperty('--delay', (Math.random() * 5) + 's');
+                    particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+                    sunParticlesContainer.appendChild(particle);
                 }
-            }
 
-            // Sinh ngẫu nhiên các ngôi sao cho Chế độ Đêm
-            function createStars() {
-                const container = document.getElementById('stars');
-                if (!container) return;
-                container.innerHTML = '';
-                const starCount = 65;
-                
-                for (let i = 0; i < starCount; i++) {
+                // 2. Tạo vì tinh tú cho Bầu Trời Đêm
+                const starsList = document.getElementById('starsList');
+                for (let i = 0; i < 120; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
-                    const size = Math.random() * 2.5 + 1;
-                    star.style.width = `${size}px`;
-                    star.style.height = `${size}px`;
-                    star.style.top = `${Math.random() * 100}%`;
-                    star.style.left = `${Math.random() * 100}%`;
-                    star.style.setProperty('--duration', `${Math.random() * 3 + 1.5}s`);
-                    star.style.setProperty('--delay', `${Math.random() * 3}s`);
-                    container.appendChild(star);
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = size + 'px';
+                    star.style.height = size + 'px';
+                    star.style.top = Math.random() * 100 + 'vh';
+                    star.style.left = Math.random() * 100 + 'vw';
+                    star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
+                    star.style.setProperty('--delay', (Math.random() * 4) + 's');
+                    starsList.appendChild(star);
+                }
+
+                // 3. Tạo sao băng cho Bầu Trời Đêm
+                const shootingStarsList = document.getElementById('shootingStarsList');
+                for (let i = 0; i < 6; i++) {
+                    const shootingStar = document.createElement('div');
+                    shootingStar.className = 'shooting-star';
+                    shootingStar.style.top = (Math.random() * 60) + 'vh';
+                    shootingStar.style.right = (Math.random() * 30) + 'vw';
+                    shootingStar.style.setProperty('--speed', (Math.random() * 3 + 3) + 's');
+                    shootingStar.style.setProperty('--delay', (Math.random() * 7) + 's');
+                    shootingStarsList.appendChild(shootingStar);
                 }
             }
 
+            // Chuyển đổi giao diện Ban Mai / Ban Đêm
             function toggleTheme() {
-                const html = document.documentElement;
-                const icon = document.getElementById('themeIcon');
-                const text = document.getElementById('themeText');
-                const badge = document.getElementById('skyBadge');
-                
-                if (html.classList.contains('dark')) {
-                    html.classList.remove('dark');
-                    icon.textContent = '🌅';
-                    text.textContent = 'Ban Mai';
-                    badge.innerHTML = '🌅 Ban Mai Rực Rỡ';
+                const isDark = document.documentElement.classList.toggle('dark');
+                const themeIcon = document.getElementById('themeIcon');
+                const themeText = document.getElementById('themeText');
+                const skyBadge = document.getElementById('skyBadge');
+                const subHeadline = document.getElementById('subHeadline');
+
+                if (isDark) {
+                    themeIcon.innerText = "🌙";
+                    themeText.innerText = "Bầu Trời Tinh Tú";
+                    skyBadge.innerHTML = "🌙 Bầu trời tinh tú";
+                    subHeadline.innerText = "Như một vì tinh tú lấp lánh cùng sao băng đêm";
                 } else {
-                    html.classList.add('dark');
-                    icon.textContent = '🌙';
-                    text.textContent = 'Đêm Sao';
-                    badge.innerHTML = '✨ Bầu trời đêm nhiều sao';
+                    themeIcon.innerText = "🌅";
+                    themeText.innerText = "Ban Mai";
+                    skyBadge.innerHTML = "🌅 Ánh bình minh";
+                    subHeadline.innerText = "Như tia nắng ban mai chiếu qua không gian nhận diện hoa";
                 }
             }
 
-            function adjustValue(inputId, step) {
-                const input = document.getElementById(inputId);
-                let val = parseFloat(input.value) + step;
-                const min = parseFloat(input.min);
-                const max = parseFloat(input.max);
-                
-                val = Math.min(Math.max(val, min), max);
+            function adjustValue(id, delta) {
+                const input = document.getElementById(id);
+                let val = parseFloat(input.value) + delta;
+                val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
                 input.value = val.toFixed(1);
                 updateUI();
+            }
+
+            function updateUI() {
+                const sl = parseFloat(document.getElementById('sepal_length').value);
+                const sw = parseFloat(document.getElementById('sepal_width').value);
+                const pl = parseFloat(document.getElementById('petal_length').value);
+                const pw = parseFloat(document.getElementById('petal_width').value);
+
+                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
+                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
+                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
+                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
+
+                // Cập nhật SVG mô phỏng
+                const svgSepal = document.getElementById('svgSepal');
+                const svgSepal2 = document.getElementById('svgSepal2');
+                const svgPetal = document.getElementById('svgPetal');
+
+                if (svgSepal) {
+                    svgSepal.setAttribute('ry', Math.min(48, sl * 6));
+                    svgSepal.setAttribute('rx', Math.min(30, sw * 5));
+                    svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
+                    svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
+                    svgPetal.setAttribute('r', Math.min(35, Math.max(8, pl * 4.5)));
+                }
+
+                // Cảnh báo chỉ số bất thường
+                const warningBox = document.getElementById('warningBox');
+                const warningText = document.getElementById('warningText');
+                if (pl < pw) {
+                    warningText.innerText = 'Tỷ lệ cánh hoa bất thường: Chiều dài nhỏ hơn chiều rộng.';
+                    warningBox.classList.remove('hidden');
+                } else if (sl < pl) {
+                    warningText.innerText = 'Cánh hoa dài hơn đài hoa khá nhiều, thuộc dạng đột biến nhẹ.';
+                    warningBox.classList.remove('hidden');
+                } else {
+                    warningBox.classList.add('hidden');
+                }
             }
 
             function applyPreset(sl, sw, pl, pw) {
@@ -559,121 +602,58 @@ def home():
                 updateUI();
             }
 
-            function updateUI() {
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
-
-                document.getElementById('sl_val').textContent = sl.toFixed(1) + ' cm';
-                document.getElementById('sw_val').textContent = sw.toFixed(1) + ' cm';
-                document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
-                document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
-
-                // Cập nhật mô phỏng hoa dạng SVG Trực Quan
-                const svgSepal = document.getElementById('svgSepal');
-                const svgSepal2 = document.getElementById('svgSepal2');
-                const svgPetal = document.getElementById('svgPetal');
-
-                svgSepal.setAttribute('rx', (sw * 6).toFixed(1));
-                svgSepal.setAttribute('ry', (sl * 6).toFixed(1));
-                svgSepal2.setAttribute('rx', (sl * 6).toFixed(1));
-                svgSepal2.setAttribute('ry', (sw * 6).toFixed(1));
-                svgPetal.setAttribute('r', (pl * 4 + pw * 3).toFixed(1));
-
-                // Cảnh báo kích thước dị thường
-                const warningBox = document.getElementById('warningBox');
-                const warningText = document.getElementById('warningText');
-
-                if (pl < pw) {
-                    warningText.textContent = 'Cánh hoa dài nhỏ hơn cánh hoa rộng là trường hợp hiếm gặp trong tự nhiên.';
-                    warningBox.classList.remove('hidden');
-                } else if (sl < pl && sw < pw) {
-                    warningText.textContent = 'Cánh hoa lớn hơn hẳn đài hoa, kích thước loài hoa này phát triển rất đặc biệt.';
-                    warningBox.classList.remove('hidden');
-                } else {
-                    warningBox.classList.add('hidden');
-                }
-            }
-
             async function submitForm(e) {
                 e.preventDefault();
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
+                const payload = {
+                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
+                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
+                    petal_length: parseFloat(document.getElementById('petal_length').value),
+                    petal_width: parseFloat(document.getElementById('petal_width').value)
+                };
 
                 try {
                     const res = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            sepal_length: sl,
-                            sepal_width: sw,
-                            petal_length: pl,
-                            petal_width: pw
-                        })
+                        body: JSON.stringify(payload)
                     });
-
                     const data = await res.json();
 
-                    // Hiển thị kết quả
-                    document.getElementById('resultIcon').textContent = data.icon;
-                    document.getElementById('resultName').textContent = data.prediction;
+                    document.getElementById('resultIcon').innerText = data.icon;
+                    document.getElementById('resultName').innerText = data.prediction;
                     document.getElementById('resultName').style.color = data.color;
-                    document.getElementById('resultDesc').textContent = data.desc;
+                    document.getElementById('resultDesc').innerText = data.desc;
 
-                    document.getElementById('careTipsText').textContent = data.care_tips;
+                    document.getElementById('careTipsText').innerText = data.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
-                    // Hiển thị thanh xác suất
-                    document.getElementById('probBars').classList.remove('hidden');
-                    data.probabilities.forEach((p, idx) => {
-                        const percent = (p * 100).toFixed(1) + '%';
-                        document.getElementById(`prob${idx}`).textContent = percent;
-                        document.getElementById(`bar${idx}`).style.width = percent;
-                    });
+                    const probs = data.probabilities;
+                    document.getElementById('prob0').innerText = Math.round(probs[0] * 100) + '%';
+                    document.getElementById('prob1').innerText = Math.round(probs[1] * 100) + '%';
+                    document.getElementById('prob2').innerText = Math.round(probs[2] * 100) + '%';
 
-                    // Hiệu ứng pháo hoa Confetti chúc mừng
-                    if (window.confetti) {
+                    document.getElementById('bar0').style.width = (probs[0] * 100) + '%';
+                    document.getElementById('bar1').style.width = (probs[1] * 100) + '%';
+                    document.getElementById('bar2').style.width = (probs[2] * 100) + '%';
+
+                    document.getElementById('probBars').classList.remove('hidden');
+
+                    // Bắn pháo hoa Confetti chúc mừng
+                    if (typeof confetti === 'function') {
                         confetti({
-                            particleCount: 50,
-                            spread: 60,
-                            origin: { y: 0.75 }
+                            particleCount: 65,
+                            spread: 70,
+                            origin: { y: 0.6 }
                         });
                     }
-
-                    // Lưu lịch sử
-                    addHistory(data.prediction, sl, sw, pl, pw);
-
                 } catch (err) {
-                    console.error("Lỗi dự đoán:", err);
+                    console.error('Lỗi phân tích:', err);
                 }
             }
 
-            function addHistory(name, sl, sw, pl, pw) {
-                historyData.unshift({ name, sl, sw, pl, pw });
-                if (historyData.length > 5) historyData.pop();
-
-                const tbody = document.getElementById('historyTable');
-                tbody.innerHTML = historyData.map(item => `
-                    <tr class="hover:bg-amber-500/10 dark:hover:bg-slate-800/40 transition">
-                        <td class="py-2 font-bold" style="color: ${item.name === 'Iris-setosa' ? '#8b5cf6' : item.name === 'Iris-versicolor' ? '#fb923c' : '#f59e0b'}">${item.name}</td>
-                        <td class="py-2">${item.sl} × ${item.sw}</td>
-                        <td class="py-2">${item.pl} × ${item.pw}</td>
-                    </tr>
-                `).join('');
-            }
-
-            function clearHistory() {
-                historyData = [];
-                document.getElementById('historyTable').innerHTML = `<tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-400 font-sans">Chưa có nhật ký quan sát</td></tr>`;
-            }
-
-            // Khởi tạo
+            // Gọi hàm tạo hiệu ứng khi tải trang
             window.addEventListener('DOMContentLoaded', () => {
-                createSunParticles();
-                createStars();
+                initEffects();
                 updateUI();
             });
         </script>
