@@ -369,6 +369,51 @@ def home():
                             PHÂN TÍCH & DỰ ĐOÁN
                         </button>
                     </form>
+
+                    <!-- REFERENCE TABLE (ĐÃ ĐẨY XUỐNG DƯỚI NÚT PHÂN TÍCH) -->
+                    <div class="pt-4 border-t border-amber-200/60 dark:border-slate-800 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
+                                <span>📖</span> Bảng Chỉ Số Tham Chiếu Tự Nhiên
+                            </h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
+                                    <tr>
+                                        <th class="pb-2">Loài Hoa</th>
+                                        <th class="pb-2">Đài (Dài)</th>
+                                        <th class="pb-2">Đài (Rộng)</th>
+                                        <th class="pb-2">Cánh (Dài)</th>
+                                        <th class="pb-2">Cánh (Rộng)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                                    <tr>
+                                        <td class="py-2 font-bold text-purple-600 dark:text-purple-400">Setosa</td>
+                                        <td>4.3 - 5.8 cm</td>
+                                        <td>2.3 - 4.4 cm</td>
+                                        <td>1.0 - 1.9 cm</td>
+                                        <td>0.1 - 0.6 cm</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 font-bold text-orange-500 dark:text-orange-400">Versicolor</td>
+                                        <td>4.9 - 7.0 cm</td>
+                                        <td>2.0 - 3.4 cm</td>
+                                        <td>3.0 - 5.1 cm</td>
+                                        <td>1.0 - 1.8 cm</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-2 font-bold text-sky-600 dark:text-sky-400">Virginica</td>
+                                        <td>4.9 - 7.9 cm</td>
+                                        <td>2.2 - 3.8 cm</td>
+                                        <td>4.5 - 6.9 cm</td>
+                                        <td>1.4 - 2.5 cm</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- PREVIEW & RESULT CARD -->
@@ -426,7 +471,7 @@ def home():
                         </div>
                     </div>
 
-                    <!-- HISTORY CARD -->
+                    <!-- HISTORY CARD (ĐÃ ĐỔI THÀNH BẢNG 4 CỘT) -->
                     <div class="nature-card p-5 rounded-3xl space-y-3">
                         <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-2">
                             <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -436,55 +481,24 @@ def home():
                                 🗑️ Xóa lịch sử
                             </button>
                         </div>
-                        <div id="historyList" class="space-y-2 max-h-40 overflow-y-auto text-xs pr-1">
-                            <p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>
+                        <div id="historyContainer" class="max-h-48 overflow-y-auto">
+                            <table class="w-full text-left text-xs font-mono">
+                                <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px] sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
+                                    <tr>
+                                        <th class="pb-2">Tên loài hoa</th>
+                                        <th class="pb-2">Đài (DxR)</th>
+                                        <th class="pb-2">Cánh (DxR)</th>
+                                        <th class="pb-2 text-right">Thời gian</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="historyTableBody" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                                    <tr id="emptyHistoryRow">
+                                        <td colspan="4" class="text-amber-900/50 dark:text-slate-500 text-center py-4 italic">Chưa có lượt phân tích nào</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- REFERENCE TABLE -->
-            <div class="nature-card p-5 rounded-3xl space-y-4">
-                <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-3">
-                    <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                        <span>📖</span> Bảng Chỉ Số Tham Chiếu Tự Nhiên
-                    </h3>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs font-mono">
-                        <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px]">
-                            <tr>
-                                <th class="pb-2">Loài Hoa</th>
-                                <th class="pb-2">Đài (Dài)</th>
-                                <th class="pb-2">Đài (Rộng)</th>
-                                <th class="pb-2">Cánh (Dài)</th>
-                                <th class="pb-2">Cánh (Rộng)</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                            <tr>
-                                <td class="py-2.5 font-bold text-purple-600 dark:text-purple-400">Setosa</td>
-                                <td>4.3 - 5.8 cm</td>
-                                <td>2.3 - 4.4 cm</td>
-                                <td>1.0 - 1.9 cm</td>
-                                <td>0.1 - 0.6 cm</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2.5 font-bold text-orange-500 dark:text-orange-400">Versicolor</td>
-                                <td>4.9 - 7.0 cm</td>
-                                <td>2.0 - 3.4 cm</td>
-                                <td>3.0 - 5.1 cm</td>
-                                <td>1.0 - 1.8 cm</td>
-                            </tr>
-                            <tr>
-                                <td class="py-2.5 font-bold text-sky-600 dark:text-sky-400">Virginica</td>
-                                <td>4.9 - 7.9 cm</td>
-                                <td>2.2 - 3.8 cm</td>
-                                <td>4.5 - 6.9 cm</td>
-                                <td>1.4 - 2.5 cm</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
 
@@ -494,16 +508,18 @@ def home():
             let historyData = [];
 
             function initEffects() {
+                // Sun Particles
                 const sunParticlesContainer = document.getElementById('sunParticles');
                 if (sunParticlesContainer) {
+                    sunParticlesContainer.innerHTML = '';
                     for (let i = 0; i < 25; i++) {
                         const particle = document.createElement('div');
                         particle.className = 'sun-particle';
                         const size = Math.random() * 6 + 3;
                         particle.style.width = size + 'px';
                         particle.style.height = size + 'px';
-                        particle.style.left = Math.random() * 100 + 'vw';
-                        particle.style.top = '100vh';
+                        particle.style.left = Math.random() * 100 + '%';
+                        particle.style.bottom = '-20px';
                         particle.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
                         particle.style.setProperty('--delay', (Math.random() * 5) + 's');
                         particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
@@ -511,8 +527,10 @@ def home():
                     }
                 }
 
+                // Stars
                 const starsList = document.getElementById('starsList');
                 if (starsList) {
+                    starsList.innerHTML = '';
                     for (let i = 0; i < 60; i++) {
                         const star = document.createElement('div');
                         star.className = 'star';
@@ -527,42 +545,20 @@ def home():
                     }
                 }
 
+                // Shooting Stars
                 const shootingStarsList = document.getElementById('shootingStarsList');
                 if (shootingStarsList) {
+                    shootingStarsList.innerHTML = '';
                     for (let i = 0; i < 4; i++) {
                         const sStar = document.createElement('div');
                         sStar.className = 'shooting-star';
                         sStar.style.top = (Math.random() * 50) + '%';
-                        sStar.style.right = (Math.random() * 30) + '%';
-                        sStar.style.setProperty('--speed', (Math.random() * 2 + 3) + 's');
-                        sStar.style.setProperty('--delay', (Math.random() * 6) + 's');
+                        sStar.style.right = (Math.random() * 20) + '%';
+                        sStar.style.setProperty('--speed', (Math.random() * 2 + 2) + 's');
+                        sStar.style.setProperty('--delay', (Math.random() * 6 + i * 2) + 's');
                         shootingStarsList.appendChild(sStar);
                     }
                 }
-            }
-
-            function toggleTheme() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                document.getElementById('themeIcon').innerText = isDark ? '🌃' : '🌅';
-                document.getElementById('themeText').innerText = isDark ? 'Bầu Trời Đêm' : 'Ban Mai';
-                document.getElementById('skyBadge').innerHTML = isDark ? '🌌 Bầu trời đêm' : '🌅 Ánh bình minh';
-                document.getElementById('subHeadline').innerText = isDark ? 'Khám phá sắc hoa lung linh dưới ánh sao đêm' : 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
-            }
-
-            function adjustValue(id, delta) {
-                const input = document.getElementById(id);
-                let newVal = parseFloat(input.value) + delta;
-                newVal = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), newVal));
-                input.value = newVal.toFixed(1);
-                updateUI();
-            }
-
-            function applyPreset(sl, sw, pl, pw) {
-                document.getElementById('sepal_length').value = sl;
-                document.getElementById('sepal_width').value = sw;
-                document.getElementById('petal_length').value = pl;
-                document.getElementById('petal_width').value = pw;
-                updateUI();
             }
 
             function updateUI() {
@@ -576,85 +572,145 @@ def home():
                 document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
                 document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
 
-                const svgSepal = document.getElementById('svgSepal');
-                const svgSepal2 = document.getElementById('svgSepal2');
-                const svgPetal = document.getElementById('svgPetal');
+                // Update SVG preview
+                const sepal = document.getElementById('svgSepal');
+                const sepal2 = document.getElementById('svgSepal2');
+                const petal = document.getElementById('svgPetal');
 
-                if (svgSepal && svgSepal2 && svgPetal) {
-                    svgSepal.setAttribute('ry', Math.min(45, sl * 6));
-                    svgSepal.setAttribute('rx', Math.min(25, sw * 5));
-                    svgSepal2.setAttribute('rx', Math.min(45, sl * 6));
-                    svgSepal2.setAttribute('ry', Math.min(25, sw * 5));
-                    svgPetal.setAttribute('r', Math.min(28, (pl * 3 + pw * 4)));
+                if (sepal && sepal2 && petal) {
+                    sepal.setAttribute('rx', (sw * 5).toFixed(0));
+                    sepal.setAttribute('ry', (sl * 5).toFixed(0));
+                    sepal2.setAttribute('rx', (sl * 5).toFixed(0));
+                    sepal2.setAttribute('ry', (sw * 5).toFixed(0));
+                    petal.setAttribute('r', (pl * 4).toFixed(0));
                 }
 
+                // Check unusual values
                 const warningBox = document.getElementById('warningBox');
                 const warningText = document.getElementById('warningText');
-                let warnings = [];
-
-                if (pl > sl) warnings.push("Cánh hoa dài hơn đài hoa - đây là đặc điểm hiếm gặp ở tự nhiên.");
-                if (pw > sw) warnings.push("Cánh hoa rộng hơn đài hoa.");
-
-                if (warnings.length > 0) {
-                    warningText.innerText = warnings.join(" ");
+                if (sl < sw || pl < pw) {
+                    warningText.innerText = 'Tỷ lệ kích thước có sự chênh lệch hiếm gặp trong tự nhiên (chiều rộng lớn hơn chiều dài).';
                     warningBox.classList.remove('hidden');
                 } else {
                     warningBox.classList.add('hidden');
                 }
             }
 
+            function adjustValue(id, delta) {
+                const input = document.getElementById(id);
+                let val = parseFloat(input.value) + delta;
+                val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
+                input.value = val.toFixed(1);
+                updateUI();
+            }
+
+            function applyPreset(sl, sw, pl, pw) {
+                document.getElementById('sepal_length').value = sl;
+                document.getElementById('sepal_width').value = sw;
+                document.getElementById('petal_length').value = pl;
+                document.getElementById('petal_width').value = pw;
+                updateUI();
+            }
+
+            function toggleTheme() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                const themeIcon = document.getElementById('themeIcon');
+                const themeText = document.getElementById('themeText');
+                const skyBadge = document.getElementById('skyBadge');
+                const subHeadline = document.getElementById('subHeadline');
+
+                if (isDark) {
+                    themeIcon.innerText = '✨';
+                    themeText.innerText = 'Tinh Tú';
+                    skyBadge.innerHTML = '✨ Bầu trời tinh tú';
+                    subHeadline.innerText = 'Như ngàn vì sao lung linh thắp sáng mô hình trí tuệ nhân tạo';
+                } else {
+                    themeIcon.innerText = '🌅';
+                    themeText.innerText = 'Ban Mai';
+                    skyBadge.innerHTML = '🌅 Ánh bình minh';
+                    subHeadline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
+                }
+            }
+
             async function submitForm(e) {
                 e.preventDefault();
-                const data = {
-                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
-                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
-                    petal_length: parseFloat(document.getElementById('petal_length').value),
-                    petal_width: parseFloat(document.getElementById('petal_width').value)
-                };
+                const sl = parseFloat(document.getElementById('sepal_length').value);
+                const sw = parseFloat(document.getElementById('sepal_width').value);
+                const pl = parseFloat(document.getElementById('petal_length').value);
+                const pw = parseFloat(document.getElementById('petal_width').value);
 
                 try {
                     const res = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
+                        body: JSON.stringify({
+                            sepal_length: sl,
+                            sepal_width: sw,
+                            petal_length: pl,
+                            petal_width: pw
+                        })
                     });
-                    const result = await res.json();
+                    const data = await res.json();
 
-                    document.getElementById('resultIcon').innerText = result.icon;
-                    document.getElementById('resultName').innerText = result.prediction;
-                    document.getElementById('resultName').style.color = result.color;
-                    document.getElementById('resultDesc').innerText = result.desc;
+                    // Update UI elements
+                    document.getElementById('resultIcon').innerText = data.icon;
+                    document.getElementById('resultName').innerText = data.prediction;
+                    document.getElementById('resultName').style.color = data.color;
+                    document.getElementById('resultDesc').innerText = data.desc;
 
-                    document.getElementById('careTipsText').innerText = result.care_tips;
+                    document.getElementById('careTipsText').innerText = data.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
-                    const probs = result.probabilities;
+                    // Probability Bars
                     document.getElementById('probBars').classList.remove('hidden');
-                    
+                    const probs = data.probabilities;
                     for (let i = 0; i < 3; i++) {
-                        const percentage = (probs[i] * 100).toFixed(1) + '%';
-                        document.getElementById(`prob${i}`).innerText = percentage;
-                        document.getElementById(`bar${i}`).style.width = percentage;
+                        const pct = (probs[i] * 100).toFixed(1) + '%';
+                        document.getElementById('prob' + i).innerText = pct;
+                        document.getElementById('bar' + i).style.width = pct;
                     }
 
-                    if (typeof confetti === 'function') {
-                        confetti({
-                            particleCount: 40,
-                            spread: 60,
-                            origin: { y: 0.7 }
-                        });
-                    }
+                    // Trigger Confetti
+                    confetti({
+                        particleCount: 50,
+                        spread: 60,
+                        origin: { y: 0.7 }
+                    });
 
-                    addHistory(result, data);
+                    // Add entry to history table
+                    addToHistory(data.prediction, sl, sw, pl, pw);
 
                 } catch (err) {
-                    console.error("Lỗi khi kết nối API dự đoán:", err);
+                    alert('Đã xảy ra lỗi khi kết nối tới máy chủ dự đoán!');
                 }
             }
 
-            function addHistory(result, data) {
-                historyData.unshift({ result, data, time: new Date().toLocaleTimeString() });
+            function addToHistory(name, sl, sw, pl, pw) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                historyData.unshift({ name, sl, sw, pl, pw, time: timeStr });
                 renderHistory();
+            }
+
+            function renderHistory() {
+                const tbody = document.getElementById('historyTableBody');
+                if (!historyData || historyData.length === 0) {
+                    tbody.innerHTML = `
+                        <tr id="emptyHistoryRow">
+                            <td colspan="4" class="text-amber-900/50 dark:text-slate-500 text-center py-4 italic">Chưa có lượt phân tích nào</td>
+                        </tr>`;
+                    return;
+                }
+
+                tbody.innerHTML = historyData.map(item => `
+                    <tr class="hover:bg-amber-500/5 dark:hover:bg-slate-800/40 transition-colors">
+                        <td class="py-2 font-bold text-amber-900 dark:text-slate-200">${item.name}</td>
+                        <td class="py-2">${item.sl} x ${item.sw}</td>
+                        <td class="py-2">${item.pl} x ${item.pw}</td>
+                        <td class="py-2 text-right text-[11px] text-slate-500 dark:text-slate-400">${item.time}</td>
+                    </tr>
+                `).join('');
             }
 
             function clearHistory() {
@@ -662,32 +718,7 @@ def home():
                 renderHistory();
             }
 
-            function renderHistory() {
-                const list = document.getElementById('historyList');
-                if (historyData.length === 0) {
-                    list.innerHTML = '<p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>';
-                    return;
-                }
-
-                list.innerHTML = historyData.map(item => `
-                    <div class="p-2.5 bg-white/60 dark:bg-slate-900/60 rounded-xl border border-amber-100 dark:border-slate-800 flex justify-between items-center transition hover:border-amber-300 dark:hover:border-slate-700">
-                        <div class="space-y-0.5">
-                            <div class="flex items-center gap-1.5 font-bold" style="color: ${item.result.color}">
-                                <span>${item.result.icon}</span>
-                                <span>${item.result.prediction}</span>
-                            </div>
-                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex gap-2">
-                                <span>Đài: ${item.data.sepal_length}x${item.data.sepal_width}</span>
-                                <span>•</span>
-                                <span>Cánh: ${item.data.petal_length}x${item.data.petal_width}</span>
-                            </div>
-                        </div>
-                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">${item.time}</span>
-                    </div>
-                `).join('');
-            }
-
-            window.onload = () => {
+            window.onload = function() {
                 initEffects();
                 updateUI();
             };
