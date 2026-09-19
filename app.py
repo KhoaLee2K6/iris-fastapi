@@ -166,6 +166,26 @@ def home():
                 100% { transform: scale(1.15) rotate(15deg); opacity: 1; }
             }
 
+            /* Hiệu ứng tỏa nắng cho biểu tượng Ban ngày */
+            .sun-glow {
+                display: inline-block;
+                animation: sunGlowAnim 3s ease-in-out infinite alternate;
+            }
+            @keyframes sunGlowAnim {
+                0% {
+                    filter: drop-shadow(0 0 2px #f59e0b) drop-shadow(0 0 6px #fde047);
+                    transform: scale(1) rotate(0deg);
+                }
+                50% {
+                    filter: drop-shadow(0 0 8px #f59e0b) drop-shadow(0 0 16px #fb923c) drop-shadow(0 0 22px #fef08a);
+                    transform: scale(1.18) rotate(8deg);
+                }
+                100% {
+                    filter: drop-shadow(0 0 2px #f59e0b) drop-shadow(0 0 6px #fde047);
+                    transform: scale(1) rotate(0deg);
+                }
+            }
+
             .sun-ray {
                 position: absolute;
                 top: -20%;
@@ -214,7 +234,6 @@ def home():
                 50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 10px rgba(255, 255, 255, 1); }
             }
 
-            /* Hiệu ứng vì tinh tú lấp lánh đêm sáng */
             .star-sparkle {
                 display: inline-block;
                 animation: sparkleGlow 2s infinite ease-in-out alternate;
@@ -295,7 +314,7 @@ def home():
 
                     <!-- Nút Chuyển Chế Độ Ngày/Đêm -->
                     <button type="button" onclick="toggleTheme()" id="themeBtn" class="px-3.5 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-2 shadow-sm font-semibold">
-                        <span id="themeIcon">🌅</span>
+                        <span id="themeIcon" class="sun-glow">🌅</span>
                         <span id="themeText">Ban ngày</span>
                     </button>
                 </div>
@@ -488,59 +507,72 @@ def home():
                             <table class="w-full text-left text-xs font-mono">
                                 <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px] sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
                                     <tr>
+                                        <th class="pb-2">Thời gian</th>
                                         <th class="pb-2">Tên loài</th>
                                         <th class="pb-2">Đài (DxR)</th>
                                         <th class="pb-2">Cánh (DxR)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="historyList" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                                    <tr>
-                                        <td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-xs">Chưa có dữ liệu phân tích nào</td>
+                                    <tr id="emptyHistoryRow">
+                                        <td colspan="4" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-[11px]">Chưa có lịch sử phân tích</td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
 
         <script>
-            // Biểu tượng đêm: Vì tinh tú lấp lánh màu đêm sáng
-            const NIGHT_ICON_HTML = `<span class="star-sparkle text-indigo-300"><svg class="w-4 h-4 inline-block drop-shadow-[0_0_6px_rgba(165,180,252,0.9)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"/></svg></span>`;
-
-            // Mặc định ban ngày (Day mode)
-            let currentTheme = 'day';
-
-            function toggleTheme() {
-                const html = document.documentElement;
-                const badge = document.getElementById('skyBadge');
-                const subHeadline = document.getElementById('subHeadline');
-                const themeIcon = document.getElementById('themeIcon');
-                const themeText = document.getElementById('themeText');
-
-                if (html.classList.contains('dark')) {
-                    // Chuyển sang Ban Ngày
-                    html.classList.remove('dark');
-                    currentTheme = 'day';
-                    badge.innerHTML = "🌅 Ánh bình minh";
-                    subHeadline.innerText = "Như tia nắng ban mai chiếu qua không gian nhận diện hoa";
-                    themeIcon.innerHTML = "🌅";
-                    themeText.innerText = "Ban ngày";
-                } else {
-                    // Chuyển sang Ban Đêm
-                    html.classList.add('dark');
-                    currentTheme = 'night';
-                    badge.innerHTML = NIGHT_ICON_HTML + " Bầu trời tinh tú";
-                    subHeadline.innerText = "Như ngàn sao tỏa sáng soi chiếu nét đẹp từng cánh hoa";
-                    themeIcon.innerHTML = NIGHT_ICON_HTML;
-                    themeText.innerText = "Ban đêm";
-                }
+            // Khởi tạo hiệu ứng mặt trời hạt
+            const sunParticlesContainer = document.getElementById('sunParticles');
+            for (let i = 0; i < 18; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'sun-particle';
+                const size = Math.random() * 6 + 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-10px`;
+                particle.style.setProperty('--duration', `${Math.random() * 6 + 6}s`);
+                particle.style.setProperty('--delay', `${Math.random() * 5}s`);
+                particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
+                sunParticlesContainer.appendChild(particle);
             }
 
-            function adjustValue(id, delta) {
+            // Khởi tạo hiệu ứng sao đêm
+            const starsList = document.getElementById('starsList');
+            for (let i = 0; i < 60; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.setProperty('--delay', `${Math.random() * 3}s`);
+                starsList.appendChild(star);
+            }
+
+            // Sao băng
+            const shootingStarsList = document.getElementById('shootingStarsList');
+            for (let i = 0; i < 4; i++) {
+                const sStar = document.createElement('div');
+                sStar.className = 'shooting-star';
+                sStar.style.top = `${Math.random() * 50}%`;
+                sStar.style.right = `${Math.random() * 20}%`;
+                sStar.style.setProperty('--speed', `${Math.random() * 2 + 2.5}s`);
+                sStar.style.setProperty('--delay', `${Math.random() * 6 + i * 2}s`);
+                shootingStarsList.appendChild(sStar);
+            }
+
+            function adjustValue(id, amount) {
                 const input = document.getElementById(id);
-                let val = parseFloat(input.value) + delta;
+                let val = parseFloat(input.value) + amount;
                 val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
                 input.value = val.toFixed(1);
                 updateUI();
@@ -555,59 +587,60 @@ def home():
             }
 
             function updateUI() {
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
+                const sl = parseFloat(document.getElementById('sepal_length').value).toFixed(1);
+                const sw = parseFloat(document.getElementById('sepal_width').value).toFixed(1);
+                const pl = parseFloat(document.getElementById('petal_length').value).toFixed(1);
+                const pw = parseFloat(document.getElementById('petal_width').value).toFixed(1);
 
-                document.getElementById('sl_val').innerText = sl.toFixed(1) + " cm";
-                document.getElementById('sw_val').innerText = sw.toFixed(1) + " cm";
-                document.getElementById('pl_val').innerText = pl.toFixed(1) + " cm";
-                document.getElementById('pw_val').innerText = pw.toFixed(1) + " cm";
+                document.getElementById('sl_val').innerText = sl + ' cm';
+                document.getElementById('sw_val').innerText = sw + ' cm';
+                document.getElementById('pl_val').innerText = pl + ' cm';
+                document.getElementById('pw_val').innerText = pw + ' cm';
 
-                // Update SVG Preview
+                // Cập nhật SVG mô phỏng
                 const svgSepal = document.getElementById('svgSepal');
                 const svgSepal2 = document.getElementById('svgSepal2');
                 const svgPetal = document.getElementById('svgPetal');
 
-                svgSepal.setAttribute('ry', Math.min(sl * 7, 45));
+                svgSepal.setAttribute('ry', Math.min(sl * 6, 45));
                 svgSepal.setAttribute('rx', Math.min(sw * 5, 30));
-                svgSepal2.setAttribute('rx', Math.min(sl * 7, 45));
+                svgSepal2.setAttribute('rx', Math.min(sl * 6, 45));
                 svgSepal2.setAttribute('ry', Math.min(sw * 5, 30));
-                svgPetal.setAttribute('r', Math.min((pl + pw) * 4, 25));
+                svgPetal.setAttribute('r', Math.min((parseFloat(pl) + parseFloat(pw)) * 4, 25));
             }
 
-            let historyData = [];
+            function toggleTheme() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                const badge = document.getElementById('skyBadge');
+                const subHeadline = document.getElementById('subHeadline');
+                const themeIcon = document.getElementById('themeIcon');
+                const themeText = document.getElementById('themeText');
 
-            function renderHistory() {
-                const list = document.getElementById('historyList');
-                if (historyData.length === 0) {
-                    list.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-xs">Chưa có dữ liệu phân tích nào</td></tr>`;
-                    return;
+                if (isDark) {
+                    badge.innerHTML = '<span class="star-sparkle">✨</span> Bầu trời tinh tú';
+                    subHeadline.innerText = 'Lấp lánh tựa vì sao trong đêm sáng nhận diện hoa';
+                    themeIcon.innerText = '🌙';
+                    themeIcon.classList.remove('sun-glow');
+                    themeText.innerText = 'Ban đêm';
+                } else {
+                    badge.innerHTML = '🌅 Ánh bình minh';
+                    subHeadline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
+                    themeIcon.innerText = '🌅';
+                    themeIcon.classList.add('sun-glow');
+                    themeText.innerText = 'Ban ngày';
                 }
-                list.innerHTML = historyData.map(item => `
-                    <tr class="hover:bg-amber-500/5 dark:hover:bg-slate-800/40 transition">
-                        <td class="py-2 font-bold" style="color: ${item.color}">${item.icon} ${item.name}</td>
-                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.sl} x ${item.sw}</td>
-                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.pl} x ${item.pw}</td>
-                    </tr>
-                `).join('');
-            }
-
-            function clearHistory() {
-                historyData = [];
-                renderHistory();
             }
 
             async function submitForm(e) {
                 e.preventDefault();
+
                 const sl = parseFloat(document.getElementById('sepal_length').value);
                 const sw = parseFloat(document.getElementById('sepal_width').value);
                 const pl = parseFloat(document.getElementById('petal_length').value);
                 const pw = parseFloat(document.getElementById('petal_width').value);
 
                 try {
-                    const res = await fetch('/predict', {
+                    const response = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -617,91 +650,68 @@ def home():
                             petal_width: pw
                         })
                     });
-                    const data = await res.json();
 
+                    const data = await response.json();
+
+                    // Cập nhật thẻ kết quả
                     document.getElementById('resultIcon').innerText = data.icon;
                     document.getElementById('resultName').innerText = data.prediction;
                     document.getElementById('resultName').style.color = data.color;
                     document.getElementById('resultDesc').innerText = data.desc;
-                    
+
+                    const careBox = document.getElementById('careBox');
                     document.getElementById('careTipsText').innerText = data.care_tips;
-                    document.getElementById('careBox').classList.remove('hidden');
+                    careBox.classList.remove('hidden');
 
-                    const probs = data.probabilities;
-                    document.getElementById('prob0').innerText = (probs[0] * 100).toFixed(1) + '%';
-                    document.getElementById('prob1').innerText = (probs[1] * 100).toFixed(1) + '%';
-                    document.getElementById('prob2').innerText = (probs[2] * 100).toFixed(1) + '%';
-
-                    document.getElementById('bar0').style.width = (probs[0] * 100) + '%';
-                    document.getElementById('bar1').style.width = (probs[1] * 100) + '%';
-                    document.getElementById('bar2').style.width = (probs[2] * 100) + '%';
-
+                    // Hiển thị độ tin cậy
                     document.getElementById('probBars').classList.remove('hidden');
+                    const probs = data.probabilities;
+                    for (let i = 0; i < 3; i++) {
+                        const percent = (probs[i] * 100).toFixed(1) + '%';
+                        document.getElementById(`prob${i}`).innerText = percent;
+                        document.getElementById(`bar${i}`).style.width = percent;
+                    }
 
+                    // Bắn pháo hoa hiệu ứng
                     confetti({
                         particleCount: 50,
                         spread: 60,
                         origin: { y: 0.7 }
                     });
 
-                    // Cập nhật lịch sử
-                    historyData.unshift({
-                        name: data.prediction,
-                        icon: data.icon,
-                        color: data.color,
-                        sl: sl, sw: sw, pl: pl, pw: pw
-                    });
-                    renderHistory();
+                    // Thêm vào Bảng Lịch sử cùng thời gian thực
+                    const now = new Date();
+                    const timeString = now.toTimeString().split(' ')[0]; // Định dạng HH:MM:SS
+
+                    const emptyRow = document.getElementById('emptyHistoryRow');
+                    if (emptyRow) emptyRow.remove();
+
+                    const historyList = document.getElementById('historyList');
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'hover:bg-amber-500/10 dark:hover:bg-slate-800/40 transition-colors';
+                    newRow.innerHTML = `
+                        <td class="py-2 text-slate-500 dark:text-slate-400">${timeString}</td>
+                        <td class="py-2 font-bold" style="color: ${data.color}">${data.prediction}</td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${sl}x${sw}</td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${pl}x${pw}</td>
+                    `;
+                    historyList.insertBefore(newRow, historyList.firstChild);
 
                 } catch (err) {
-                    console.error("Lỗi phân tích:", err);
+                    alert('Đã xảy ra lỗi khi kết nối với máy chủ!');
                 }
             }
 
-            // Tạo các hạt ánh sáng ban ngày
-            const sunParticlesContainer = document.getElementById('sunParticles');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'sun-particle';
-                const size = Math.random() * 6 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.bottom = `-10px`;
-                particle.style.setProperty('--duration', `${Math.random() * 6 + 6}s`);
-                particle.style.setProperty('--delay', `${Math.random() * 5}s`);
-                particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
-                sunParticlesContainer.appendChild(particle);
+            function clearHistory() {
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = `
+                    <tr id="emptyHistoryRow">
+                        <td colspan="4" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-[11px]">Chưa có lịch sử phân tích</td>
+                    </tr>
+                `;
             }
 
-            // Tạo các vì tinh tú ban đêm
-            const starsList = document.getElementById('starsList');
-            for (let i = 0; i < 80; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
-                const size = Math.random() * 3 + 1;
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
-                star.style.setProperty('--delay', `${Math.random() * 3}s`);
-                starsList.appendChild(star);
-            }
-
-            // Tạo sao băng
-            const shootingStarsList = document.getElementById('shootingStarsList');
-            for (let i = 0; i < 4; i++) {
-                const sStar = document.createElement('div');
-                sStar.className = 'shooting-star';
-                sStar.style.top = `${Math.random() * 50}%`;
-                sStar.style.right = `${Math.random() * 30}%`;
-                sStar.style.setProperty('--speed', `${Math.random() * 2 + 3}s`);
-                sStar.style.setProperty('--delay', `${Math.random() * 5}s`);
-                shootingStarsList.appendChild(sStar);
-            }
-
-            // Khởi tạo UI ban đầu
+            // Khởi chạy UI ban đầu
             updateUI();
         </script>
     </body>
