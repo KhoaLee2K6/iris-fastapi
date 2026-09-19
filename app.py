@@ -284,7 +284,7 @@ def home():
 
                     <button type="button" onclick="toggleTheme()" id="themeBtn" class="px-3.5 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-2 shadow-sm font-semibold">
                         <span id="themeIcon">🌅</span>
-                        <span id="themeText">Ban Mai</span>
+                        <span id="themeText">Ngày</span>
                     </button>
                 </div>
             </header>
@@ -621,7 +621,7 @@ def home():
 
                 if (isDark) {
                     themeIcon.innerText = '✨';
-                    themeText.innerText = 'Tinh Tú';
+                    themeText.innerText = 'Đêm';
                     skyBadge.innerHTML = '✨ Bầu trời tinh tú';
                     subHeadline.innerText = 'Như ngàn vì sao lung linh thắp sáng mô hình trí tuệ nhân tạo';
                 } else {
