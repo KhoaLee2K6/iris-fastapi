@@ -296,7 +296,7 @@ def home():
                                 <span class="sun-icon-glow">🌅</span> Ánh bình minh
                             </span>
                         </div>
-                        <p id="subHeadline" class="text-xs text-amber-900/70 dark:text-slate-400">Như tia nắng ban mai chiếu qua không gian nhận diện hoa</p>
+                        <p id="subHeadline" class="text-xs text-amber-900/70 dark:text-slate-400">Như tia nắng đầu ngày, mở ra thế giới rực rỡ của muôn sắc hoa </p>
                     </div>
                 </div>
 
