@@ -214,6 +214,17 @@ def home():
                 50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 10px rgba(255, 255, 255, 1); }
             }
 
+            /* Hiệu ứng vì tinh tú lấp lánh đêm sáng */
+            .star-sparkle {
+                display: inline-block;
+                animation: sparkleGlow 2s infinite ease-in-out alternate;
+            }
+            @keyframes sparkleGlow {
+                0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px #38bdf8); }
+                50% { transform: scale(1.25) rotate(15deg); filter: drop-shadow(0 0 8px #818cf8) drop-shadow(0 0 12px #e0e7ff); }
+                100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px #38bdf8); }
+            }
+
             .shooting-star {
                 position: absolute;
                 height: 2px;
@@ -282,9 +293,10 @@ def home():
                         <button type="button" onclick="applyPreset(6.5, 3.0, 5.5, 2.0)" class="px-3 py-1 hover:bg-white dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 text-xs rounded-xl font-medium transition shadow-sm">Virginica</button>
                     </div>
 
+                    <!-- Nút Chuyển Chế Độ Ngày/Đêm -->
                     <button type="button" onclick="toggleTheme()" id="themeBtn" class="px-3.5 py-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-amber-900 dark:text-slate-200 rounded-2xl border border-amber-200/80 dark:border-slate-700 text-xs transition flex items-center gap-2 shadow-sm font-semibold">
                         <span id="themeIcon">🌅</span>
-                        <span id="themeText">Ngày</span>
+                        <span id="themeText">Ban ngày</span>
                     </button>
                 </div>
             </header>
@@ -351,15 +363,6 @@ def home():
                                     <button type="button" onclick="adjustValue('petal_width', 0.1)" class="w-7 h-7 flex-none bg-amber-100 dark:bg-slate-800 hover:bg-amber-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold text-amber-900 dark:text-slate-300 transition">+</button>
                                     <span id="pw_val" class="w-16 flex-none text-right font-mono text-xs font-bold text-amber-700 dark:text-indigo-400 bg-amber-50 dark:bg-slate-900/80 px-2 py-1 rounded-md border border-amber-200/50 dark:border-indigo-900/50">0.2 cm</span>
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Warning Alert Box -->
-                        <div id="warningBox" class="hidden p-3.5 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-300/50 dark:border-amber-900/50 rounded-2xl text-amber-900 dark:text-amber-300 text-xs flex items-start gap-2.5">
-                            <span class="text-base">🌾</span>
-                            <div>
-                                <span class="font-semibold block uppercase text-[11px] text-amber-900 dark:text-amber-400">Lưu ý sinh thái</span>
-                                <span id="warningText" class="text-slate-700 dark:text-slate-300 leading-relaxed"></span>
                             </div>
                         </div>
 
@@ -485,90 +488,53 @@ def home():
                             <table class="w-full text-left text-xs font-mono">
                                 <thead class="text-amber-900/50 dark:text-slate-400 border-b border-amber-200/60 dark:border-slate-800 uppercase text-[10px] sticky top-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md">
                                     <tr>
-                                        <th class="pb-2">Tên loài hoa</th>
+                                        <th class="pb-2">Tên loài</th>
                                         <th class="pb-2">Đài (DxR)</th>
                                         <th class="pb-2">Cánh (DxR)</th>
-                                        <th class="pb-2 text-right">Độ tin cậy</th>
                                     </tr>
                                 </thead>
                                 <tbody id="historyList" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
+                                    <tr>
+                                        <td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-xs">Chưa có dữ liệu phân tích nào</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
         <script>
-            // MẶC ĐỊNH LÀ NGÀY (Chế độ Ban ngày - Sunrise)
-            document.documentElement.classList.remove('dark');
+            // Biểu tượng đêm: Vì tinh tú lấp lánh màu đêm sáng
+            const NIGHT_ICON_HTML = `<span class="star-sparkle text-indigo-300"><svg class="w-4 h-4 inline-block drop-shadow-[0_0_6px_rgba(165,180,252,0.9)]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0L14.59 8.41L23 11L14.59 13.59L12 22L9.41 13.59L1 11L9.41 8.41L12 0Z"/></svg></span>`;
 
-            // Tạo các hiệu ứng hạt Ban ngày & Ban đêm
-            function initParticles() {
-                const sunParticles = document.getElementById('sunParticles');
-                for (let i = 0; i < 25; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'sun-particle';
-                    const size = Math.random() * 6 + 3;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.left = Math.random() * 100 + 'vw';
-                    p.style.top = (100 + Math.random() * 20) + 'vh';
-                    p.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
-                    p.style.setProperty('--delay', (Math.random() * 5) + 's');
-                    p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
-                    sunParticles.appendChild(p);
-                }
-
-                const starsList = document.getElementById('starsList');
-                for (let i = 0; i < 80; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    const size = Math.random() * 3 + 1;
-                    star.style.width = size + 'px';
-                    star.style.height = size + 'px';
-                    star.style.left = Math.random() * 100 + 'vw';
-                    star.style.top = Math.random() * 100 + 'vh';
-                    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-                    star.style.setProperty('--delay', (Math.random() * 3) + 's');
-                    starsList.appendChild(star);
-                }
-
-                const shootingStarsList = document.getElementById('shootingStarsList');
-                for (let i = 0; i < 4; i++) {
-                    const s = document.createElement('div');
-                    s.className = 'shooting-star';
-                    s.style.top = (Math.random() * 50) + '%';
-                    s.style.right = (Math.random() * 30) + '%';
-                    s.style.setProperty('--speed', (Math.random() * 2 + 3) + 's');
-                    s.style.setProperty('--delay', (Math.random() * 8 + i * 2) + 's');
-                    shootingStarsList.appendChild(s);
-                }
-            }
+            // Mặc định ban ngày (Day mode)
+            let currentTheme = 'day';
 
             function toggleTheme() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                updateThemeUI(isDark);
-            }
-
-            function updateThemeUI(isDark) {
-                const icon = document.getElementById('themeIcon');
-                const text = document.getElementById('themeText');
+                const html = document.documentElement;
                 const badge = document.getElementById('skyBadge');
-                const headline = document.getElementById('subHeadline');
+                const subHeadline = document.getElementById('subHeadline');
+                const themeIcon = document.getElementById('themeIcon');
+                const themeText = document.getElementById('themeText');
 
-                if (isDark) {
-                    icon.innerText = '🌌';
-                    text.innerText = 'Đêm';
-                    badge.innerHTML = '🌌 Bầu trời tinh tú';
-                    headline.innerText = 'Như ngàn vì sao hội tụ soi sáng phân tích';
+                if (html.classList.contains('dark')) {
+                    // Chuyển sang Ban Ngày
+                    html.classList.remove('dark');
+                    currentTheme = 'day';
+                    badge.innerHTML = "🌅 Ánh bình minh";
+                    subHeadline.innerText = "Như tia nắng ban mai chiếu qua không gian nhận diện hoa";
+                    themeIcon.innerHTML = "🌅";
+                    themeText.innerText = "Ban ngày";
                 } else {
-                    icon.innerText = '🌅';
-                    text.innerText = 'Ngày';
-                    badge.innerHTML = '🌅 Ánh bình minh';
-                    headline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
+                    // Chuyển sang Ban Đêm
+                    html.classList.add('dark');
+                    currentTheme = 'night';
+                    badge.innerHTML = NIGHT_ICON_HTML + " Bầu trời tinh tú";
+                    subHeadline.innerText = "Như ngàn sao tỏa sáng soi chiếu nét đẹp từng cánh hoa";
+                    themeIcon.innerHTML = NIGHT_ICON_HTML;
+                    themeText.innerText = "Ban đêm";
                 }
             }
 
@@ -594,108 +560,36 @@ def home():
                 const pl = parseFloat(document.getElementById('petal_length').value);
                 const pw = parseFloat(document.getElementById('petal_width').value);
 
-                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
-                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
-                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
-                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
+                document.getElementById('sl_val').innerText = sl.toFixed(1) + " cm";
+                document.getElementById('sw_val').innerText = sw.toFixed(1) + " cm";
+                document.getElementById('pl_val').innerText = pl.toFixed(1) + " cm";
+                document.getElementById('pw_val').innerText = pw.toFixed(1) + " cm";
 
-                // Cập nhật SVG
+                // Update SVG Preview
                 const svgSepal = document.getElementById('svgSepal');
                 const svgSepal2 = document.getElementById('svgSepal2');
                 const svgPetal = document.getElementById('svgPetal');
 
-                svgSepal.setAttribute('ry', Math.min(48, sl * 6));
-                svgSepal.setAttribute('rx', Math.min(30, sw * 5));
-                svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
-                svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
-                svgPetal.setAttribute('r', Math.min(30, (pl + pw) * 3));
-
-                // Kiểm tra cảnh báo sinh thái
-                const warningBox = document.getElementById('warningBox');
-                const warningText = document.getElementById('warningText');
-
-                if (pl < pw) {
-                    warningText.innerText = "Cánh hoa dài nhỏ hơn rộng - tỉ lệ khá hiếm trong tự nhiên.";
-                    warningBox.classList.remove('hidden');
-                } else if (sl < pl) {
-                    warningText.innerText = "Chiều dài đài hoa nhỏ hơn cánh hoa - hãy kiểm tra lại thông số đầu vào.";
-                    warningBox.classList.remove('hidden');
-                } else {
-                    warningBox.classList.add('hidden');
-                }
+                svgSepal.setAttribute('ry', Math.min(sl * 7, 45));
+                svgSepal.setAttribute('rx', Math.min(sw * 5, 30));
+                svgSepal2.setAttribute('rx', Math.min(sl * 7, 45));
+                svgSepal2.setAttribute('ry', Math.min(sw * 5, 30));
+                svgPetal.setAttribute('r', Math.min((pl + pw) * 4, 25));
             }
 
             let historyData = [];
 
-            async function submitForm(event) {
-                event.preventDefault();
-                const data = {
-                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
-                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
-                    petal_length: parseFloat(document.getElementById('petal_length').value),
-                    petal_width: parseFloat(document.getElementById('petal_width').value)
-                };
-
-                try {
-                    const res = await fetch('/predict', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    const result = await res.json();
-
-                    document.getElementById('resultIcon').innerText = result.icon;
-                    document.getElementById('resultName').innerText = result.prediction;
-                    document.getElementById('resultDesc').innerText = result.desc;
-                    document.getElementById('careTipsText').innerText = result.care_tips;
-                    document.getElementById('careBox').classList.remove('hidden');
-
-                    const probs = result.probabilities;
-                    document.getElementById('probBars').classList.remove('hidden');
-
-                    for (let i = 0; i < 3; i++) {
-                        const pct = (probs[i] * 100).toFixed(1) + '%';
-                        document.getElementById('prob' + i).innerText = pct;
-                        document.getElementById('bar' + i).style.width = pct;
-                    }
-
-                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
-
-                    // Thêm vào Lịch sử
-                    const maxProb = Math.max(...probs);
-                    const historyItem = {
-                        name: result.prediction,
-                        icon: result.icon,
-                        color: result.color,
-                        sepal: `${data.sepal_length}x${data.sepal_width}`,
-                        petal: `${data.petal_length}x${data.petal_width}`,
-                        confidence: (maxProb * 100).toFixed(1) + '%'
-                    };
-
-                    historyData.unshift(historyItem);
-                    if (historyData.length > 10) historyData.pop();
-                    renderHistory();
-
-                } catch (err) {
-                    console.error("Lỗi phân tích:", err);
-                }
-            }
-
             function renderHistory() {
-                const tbody = document.getElementById('historyList');
+                const list = document.getElementById('historyList');
                 if (historyData.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="py-3 text-center text-slate-400 italic">Chưa có lịch sử phân tích</td></tr>';
+                    list.innerHTML = `<tr><td colspan="3" class="py-4 text-center text-amber-900/40 dark:text-slate-500 italic font-sans text-xs">Chưa có dữ liệu phân tích nào</td></tr>`;
                     return;
                 }
-
-                tbody.innerHTML = historyData.map(item => `
+                list.innerHTML = historyData.map(item => `
                     <tr class="hover:bg-amber-500/5 dark:hover:bg-slate-800/40 transition">
-                        <td class="py-2 font-bold flex items-center gap-1.5" style="color: ${item.color}">
-                            <span>${item.icon}</span> ${item.name.replace('Iris-', '')}
-                        </td>
-                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.sepal}</td>
-                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.petal}</td>
-                        <td class="py-2 text-right font-bold text-amber-700 dark:text-indigo-400">${item.confidence}</td>
+                        <td class="py-2 font-bold" style="color: ${item.color}">${item.icon} ${item.name}</td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.sl} x ${item.sw}</td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.pl} x ${item.pw}</td>
                     </tr>
                 `).join('');
             }
@@ -705,13 +599,110 @@ def home():
                 renderHistory();
             }
 
-            // Khởi tạo ban đầu
-            window.onload = () => {
-                initParticles();
-                updateThemeUI(false);
-                updateUI();
-                renderHistory();
-            };
+            async function submitForm(e) {
+                e.preventDefault();
+                const sl = parseFloat(document.getElementById('sepal_length').value);
+                const sw = parseFloat(document.getElementById('sepal_width').value);
+                const pl = parseFloat(document.getElementById('petal_length').value);
+                const pw = parseFloat(document.getElementById('petal_width').value);
+
+                try {
+                    const res = await fetch('/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sepal_length: sl,
+                            sepal_width: sw,
+                            petal_length: pl,
+                            petal_width: pw
+                        })
+                    });
+                    const data = await res.json();
+
+                    document.getElementById('resultIcon').innerText = data.icon;
+                    document.getElementById('resultName').innerText = data.prediction;
+                    document.getElementById('resultName').style.color = data.color;
+                    document.getElementById('resultDesc').innerText = data.desc;
+                    
+                    document.getElementById('careTipsText').innerText = data.care_tips;
+                    document.getElementById('careBox').classList.remove('hidden');
+
+                    const probs = data.probabilities;
+                    document.getElementById('prob0').innerText = (probs[0] * 100).toFixed(1) + '%';
+                    document.getElementById('prob1').innerText = (probs[1] * 100).toFixed(1) + '%';
+                    document.getElementById('prob2').innerText = (probs[2] * 100).toFixed(1) + '%';
+
+                    document.getElementById('bar0').style.width = (probs[0] * 100) + '%';
+                    document.getElementById('bar1').style.width = (probs[1] * 100) + '%';
+                    document.getElementById('bar2').style.width = (probs[2] * 100) + '%';
+
+                    document.getElementById('probBars').classList.remove('hidden');
+
+                    confetti({
+                        particleCount: 50,
+                        spread: 60,
+                        origin: { y: 0.7 }
+                    });
+
+                    // Cập nhật lịch sử
+                    historyData.unshift({
+                        name: data.prediction,
+                        icon: data.icon,
+                        color: data.color,
+                        sl: sl, sw: sw, pl: pl, pw: pw
+                    });
+                    renderHistory();
+
+                } catch (err) {
+                    console.error("Lỗi phân tích:", err);
+                }
+            }
+
+            // Tạo các hạt ánh sáng ban ngày
+            const sunParticlesContainer = document.getElementById('sunParticles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'sun-particle';
+                const size = Math.random() * 6 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.bottom = `-10px`;
+                particle.style.setProperty('--duration', `${Math.random() * 6 + 6}s`);
+                particle.style.setProperty('--delay', `${Math.random() * 5}s`);
+                particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 80}px`);
+                sunParticlesContainer.appendChild(particle);
+            }
+
+            // Tạo các vì tinh tú ban đêm
+            const starsList = document.getElementById('starsList');
+            for (let i = 0; i < 80; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 2}s`);
+                star.style.setProperty('--delay', `${Math.random() * 3}s`);
+                starsList.appendChild(star);
+            }
+
+            // Tạo sao băng
+            const shootingStarsList = document.getElementById('shootingStarsList');
+            for (let i = 0; i < 4; i++) {
+                const sStar = document.createElement('div');
+                sStar.className = 'shooting-star';
+                sStar.style.top = `${Math.random() * 50}%`;
+                sStar.style.right = `${Math.random() * 30}%`;
+                sStar.style.setProperty('--speed', `${Math.random() * 2 + 3}s`);
+                sStar.style.setProperty('--delay', `${Math.random() * 5}s`);
+                shootingStarsList.appendChild(sStar);
+            }
+
+            // Khởi tạo UI ban đầu
+            updateUI();
         </script>
     </body>
     </html>
