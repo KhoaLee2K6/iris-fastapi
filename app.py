@@ -426,13 +426,13 @@ def home():
                         </div>
                     </div>
 
-                    <!-- HISTORY CARD (MỚI THÊM NÚT XÓA LỊCH SỬ) -->
+                    <!-- HISTORY CARD -->
                     <div class="nature-card p-5 rounded-3xl space-y-3">
                         <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-2">
                             <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                                 <span>📜</span> Lịch Sử Phân Tích
                             </h3>
-                            <button type="button" onclick="clearHistory()" class="text-[11px] text-rose-500 hover:text-rose-600 dark:text-rose-400 font-medium px-2 py-0.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
+                            <button type="button" onclick="clearHistory()" class="text-[11px] text-rose-500 hover:text-rose-600 dark:text-rose-400 font-medium px-2 py-0.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition flex items-center gap-1">
                                 🗑️ Xóa lịch sử
                             </button>
                         </div>
@@ -491,65 +491,69 @@ def home():
         </div>
 
         <script>
-            // Khởi tạo các hiệu ứng tĩnh
+            let historyData = [];
+
             function initEffects() {
                 const sunParticlesContainer = document.getElementById('sunParticles');
-                for (let i = 0; i < 25; i++) {
-                    const particle = document.createElement('div');
-                    particle.className = 'sun-particle';
-                    const size = Math.random() * 6 + 3;
-                    particle.style.width = size + 'px';
-                    particle.style.height = size + 'px';
-                    particle.style.left = Math.random() * 100 + 'vw';
-                    particle.style.bottom = '-20px';
-                    particle.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
-                    particle.style.setProperty('--delay', (Math.random() * 5) + 's');
-                    particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
-                    sunParticlesContainer.appendChild(particle);
+                if (sunParticlesContainer) {
+                    for (let i = 0; i < 25; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'sun-particle';
+                        const size = Math.random() * 6 + 3;
+                        particle.style.width = size + 'px';
+                        particle.style.height = size + 'px';
+                        particle.style.left = Math.random() * 100 + 'vw';
+                        particle.style.top = '100vh';
+                        particle.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
+                        particle.style.setProperty('--delay', (Math.random() * 5) + 's');
+                        particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+                        sunParticlesContainer.appendChild(particle);
+                    }
                 }
 
                 const starsList = document.getElementById('starsList');
-                for (let i = 0; i < 100; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    const size = Math.random() * 2 + 1;
-                    star.style.width = size + 'px';
-                    star.style.height = size + 'px';
-                    star.style.top = Math.random() * 100 + 'vh';
-                    star.style.left = Math.random() * 100 + 'vw';
-                    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-                    star.style.setProperty('--delay', (Math.random() * 3) + 's');
-                    starsList.appendChild(star);
+                if (starsList) {
+                    for (let i = 0; i < 60; i++) {
+                        const star = document.createElement('div');
+                        star.className = 'star';
+                        const size = Math.random() * 3 + 1;
+                        star.style.width = size + 'px';
+                        star.style.height = size + 'px';
+                        star.style.top = Math.random() * 100 + '%';
+                        star.style.left = Math.random() * 100 + '%';
+                        star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                        star.style.setProperty('--delay', (Math.random() * 3) + 's');
+                        starsList.appendChild(star);
+                    }
                 }
 
                 const shootingStarsList = document.getElementById('shootingStarsList');
-                for (let i = 0; i < 4; i++) {
-                    const sStar = document.createElement('div');
-                    sStar.className = 'shooting-star';
-                    sStar.style.top = (Math.random() * 40) + 'vh';
-                    sStar.style.left = (Math.random() * 50 + 40) + 'vw';
-                    sStar.style.setProperty('--speed', (Math.random() * 2 + 2.5) + 's');
-                    sStar.style.setProperty('--delay', (Math.random() * 6) + 's');
-                    shootingStarsList.appendChild(sStar);
+                if (shootingStarsList) {
+                    for (let i = 0; i < 4; i++) {
+                        const sStar = document.createElement('div');
+                        sStar.className = 'shooting-star';
+                        sStar.style.top = (Math.random() * 50) + '%';
+                        sStar.style.right = (Math.random() * 30) + '%';
+                        sStar.style.setProperty('--speed', (Math.random() * 2 + 3) + 's');
+                        sStar.style.setProperty('--delay', (Math.random() * 6) + 's');
+                        shootingStarsList.appendChild(sStar);
+                    }
                 }
             }
 
             function toggleTheme() {
-                const html = document.documentElement;
-                const isDark = html.classList.toggle('dark');
-                document.getElementById('themeIcon').textContent = isDark ? '🌙' : '🌅';
-                document.getElementById('themeText').textContent = isDark ? 'Đêm Tinh Tú' : 'Ban Mai';
-                document.getElementById('skyBadge').innerHTML = isDark ? '🌙 Bầu trời tinh tú' : '🌅 Ánh bình minh';
-                document.getElementById('subHeadline').textContent = isDark 
-                    ? 'Như bầu trời đêm chiếu sáng từng đường nét dịu kỳ' 
-                    : 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
+                const isDark = document.documentElement.classList.toggle('dark');
+                document.getElementById('themeIcon').innerText = isDark ? '🌃' : '🌅';
+                document.getElementById('themeText').innerText = isDark ? 'Bầu Trời Đêm' : 'Ban Mai';
+                document.getElementById('skyBadge').innerHTML = isDark ? '🌌 Bầu trời đêm' : '🌅 Ánh bình minh';
+                document.getElementById('subHeadline').innerText = isDark ? 'Khám phá sắc hoa lung linh dưới ánh sao đêm' : 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
             }
 
             function adjustValue(id, delta) {
                 const input = document.getElementById(id);
-                let val = parseFloat(input.value) + delta;
-                val = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), val));
-                input.value = val.toFixed(1);
+                let newVal = parseFloat(input.value) + delta;
+                newVal = Math.max(parseFloat(input.min), Math.min(parseFloat(input.max), newVal));
+                input.value = newVal.toFixed(1);
                 updateUI();
             }
 
@@ -567,31 +571,33 @@ def home():
                 const pl = parseFloat(document.getElementById('petal_length').value);
                 const pw = parseFloat(document.getElementById('petal_width').value);
 
-                document.getElementById('sl_val').textContent = sl.toFixed(1) + ' cm';
-                document.getElementById('sw_val').textContent = sw.toFixed(1) + ' cm';
-                document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
-                document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
+                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
+                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
+                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
+                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
 
-                // SVG update
                 const svgSepal = document.getElementById('svgSepal');
                 const svgSepal2 = document.getElementById('svgSepal2');
                 const svgPetal = document.getElementById('svgPetal');
 
-                svgSepal.setAttribute('ry', Math.min(48, sl * 6));
-                svgSepal.setAttribute('rx', Math.min(30, sw * 5));
-                svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
-                svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
-                svgPetal.setAttribute('r', Math.min(25, (pl + pw) * 3));
+                if (svgSepal && svgSepal2 && svgPetal) {
+                    svgSepal.setAttribute('ry', Math.min(45, sl * 6));
+                    svgSepal.setAttribute('rx', Math.min(25, sw * 5));
+                    svgSepal2.setAttribute('rx', Math.min(45, sl * 6));
+                    svgSepal2.setAttribute('ry', Math.min(25, sw * 5));
+                    svgPetal.setAttribute('r', Math.min(28, (pl * 3 + pw * 4)));
+                }
 
-                // Warning checks
                 const warningBox = document.getElementById('warningBox');
                 const warningText = document.getElementById('warningText');
-                if (pl < pw) {
+                let warnings = [];
+
+                if (pl > sl) warnings.push("Cánh hoa dài hơn đài hoa - đây là đặc điểm hiếm gặp ở tự nhiên.");
+                if (pw > sw) warnings.push("Cánh hoa rộng hơn đài hoa.");
+
+                if (warnings.length > 0) {
+                    warningText.innerText = warnings.join(" ");
                     warningBox.classList.remove('hidden');
-                    warningText.textContent = 'Chiều dài cánh hoa ngắn hơn chiều rộng trong tự nhiên là rất hiếm!';
-                } else if (sl < pl) {
-                    warningBox.classList.remove('hidden');
-                    warningText.textContent = 'Đài hoa thường dài hơn cánh hoa ở mẫu hoa chuẩn sinh thái.';
                 } else {
                     warningBox.classList.add('hidden');
                 }
@@ -614,73 +620,76 @@ def home():
                     });
                     const result = await res.json();
 
-                    document.getElementById('resultIcon').textContent = result.icon;
-                    document.getElementById('resultName').textContent = result.prediction;
+                    document.getElementById('resultIcon').innerText = result.icon;
+                    document.getElementById('resultName').innerText = result.prediction;
                     document.getElementById('resultName').style.color = result.color;
-                    document.getElementById('resultDesc').textContent = result.desc;
+                    document.getElementById('resultDesc').innerText = result.desc;
 
-                    document.getElementById('careTipsText').textContent = result.care_tips;
+                    document.getElementById('careTipsText').innerText = result.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
                     const probs = result.probabilities;
                     document.getElementById('probBars').classList.remove('hidden');
-
+                    
                     for (let i = 0; i < 3; i++) {
-                        const pct = Math.round(probs[i] * 100);
-                        document.getElementById(`prob${i}`).textContent = `${pct}%`;
-                        document.getElementById(`bar${i}`).style.width = `${pct}%`;
+                        const percentage = (probs[i] * 100).toFixed(1) + '%';
+                        document.getElementById(`prob${i}`).innerText = percentage;
+                        document.getElementById(`bar${i}`).style.width = percentage;
                     }
 
-                    confetti({
-                        particleCount: 40,
-                        spread: 60,
-                        origin: { y: 0.8 }
-                    });
+                    if (typeof confetti === 'function') {
+                        confetti({
+                            particleCount: 40,
+                            spread: 60,
+                            origin: { y: 0.7 }
+                        });
+                    }
 
-                    // Lưu lịch sử
-                    addHistoryItem(result.prediction, result.icon, result.color);
+                    addHistory(result, data);
 
                 } catch (err) {
-                    alert('Đã xảy ra lỗi khi kết nối tới máy chủ!');
+                    console.error("Lỗi khi kết nối API dự đoán:", err);
                 }
             }
 
-            // Quản lý lịch sử phân tích
-            function addHistoryItem(name, icon, color) {
-                const history = JSON.parse(localStorage.getItem('iris_history') || '[]');
-                const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-                history.unshift({ name, icon, color, time });
-                if (history.length > 5) history.pop();
-                localStorage.setItem('iris_history', JSON.stringify(history));
+            function addHistory(result, data) {
+                historyData.unshift({ result, data, time: new Date().toLocaleTimeString() });
+                renderHistory();
+            }
+
+            function clearHistory() {
+                historyData = [];
                 renderHistory();
             }
 
             function renderHistory() {
-                const history = JSON.parse(localStorage.getItem('iris_history') || '[]');
-                const container = document.getElementById('historyList');
-                if (history.length === 0) {
-                    container.innerHTML = '<p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>';
+                const list = document.getElementById('historyList');
+                if (historyData.length === 0) {
+                    list.innerHTML = '<p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>';
                     return;
                 }
-                container.innerHTML = history.map(item => `
-                    <div class="flex justify-between items-center p-2 bg-white/60 dark:bg-slate-900/50 rounded-xl border border-amber-100 dark:border-slate-800">
-                        <span class="font-medium flex items-center gap-1.5" style="color: ${item.color}">
-                            <span>${item.icon}</span> ${item.name}
-                        </span>
-                        <span class="text-[10px] text-slate-400 font-mono">${item.time}</span>
+
+                list.innerHTML = historyData.map(item => `
+                    <div class="p-2.5 bg-white/60 dark:bg-slate-900/60 rounded-xl border border-amber-100 dark:border-slate-800 flex justify-between items-center transition hover:border-amber-300 dark:hover:border-slate-700">
+                        <div class="space-y-0.5">
+                            <div class="flex items-center gap-1.5 font-bold" style="color: ${item.result.color}">
+                                <span>${item.result.icon}</span>
+                                <span>${item.result.prediction}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex gap-2">
+                                <span>Đài: ${item.data.sepal_length}x${item.data.sepal_width}</span>
+                                <span>•</span>
+                                <span>Cánh: ${item.data.petal_length}x${item.data.petal_width}</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] text-slate-400 dark:text-slate-500 font-mono">${item.time}</span>
                     </div>
                 `).join('');
-            }
-
-            function clearHistory() {
-                localStorage.removeItem('iris_history');
-                renderHistory();
             }
 
             window.onload = () => {
                 initEffects();
                 updateUI();
-                renderHistory();
             };
         </script>
     </body>
