@@ -370,7 +370,7 @@ def home():
                         </button>
                     </form>
 
-                    <!-- REFERENCE TABLE (ĐÃ ĐẨY XUỐNG DƯỚI NÚT PHÂN TÍCH) -->
+                    <!-- REFERENCE TABLE -->
                     <div class="pt-4 border-t border-amber-200/60 dark:border-slate-800 space-y-3">
                         <div class="flex justify-between items-center">
                             <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-2">
@@ -471,7 +471,7 @@ def home():
                         </div>
                     </div>
 
-                    <!-- HISTORY CARD (ĐÃ ĐỔI THÀNH BẢNG 4 CỘT) -->
+                    <!-- HISTORY CARD -->
                     <div class="nature-card p-5 rounded-3xl space-y-3">
                         <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-2">
                             <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -488,111 +488,87 @@ def home():
                                         <th class="pb-2">Tên loài hoa</th>
                                         <th class="pb-2">Đài (DxR)</th>
                                         <th class="pb-2">Cánh (DxR)</th>
-                                        <th class="pb-2 text-right">Thời gian</th>
+                                        <th class="pb-2 text-right">Độ tin cậy</th>
                                     </tr>
                                 </thead>
-                                <tbody id="historyTableBody" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
-                                    <tr id="emptyHistoryRow">
-                                        <td colspan="4" class="text-amber-900/50 dark:text-slate-500 text-center py-4 italic">Chưa có lượt phân tích nào</td>
-                                    </tr>
+                                <tbody id="historyList" class="divide-y divide-amber-100 dark:divide-slate-800/60 text-slate-700 dark:text-slate-300">
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
 
         <script>
-            let historyData = [];
+            // MẶC ĐỊNH LÀ NGÀY (Chế độ Ban ngày - Sunrise)
+            document.documentElement.classList.remove('dark');
 
-            function initEffects() {
-                // Sun Particles
-                const sunParticlesContainer = document.getElementById('sunParticles');
-                if (sunParticlesContainer) {
-                    sunParticlesContainer.innerHTML = '';
-                    for (let i = 0; i < 25; i++) {
-                        const particle = document.createElement('div');
-                        particle.className = 'sun-particle';
-                        const size = Math.random() * 6 + 3;
-                        particle.style.width = size + 'px';
-                        particle.style.height = size + 'px';
-                        particle.style.left = Math.random() * 100 + '%';
-                        particle.style.bottom = '-20px';
-                        particle.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
-                        particle.style.setProperty('--delay', (Math.random() * 5) + 's');
-                        particle.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
-                        sunParticlesContainer.appendChild(particle);
-                    }
+            // Tạo các hiệu ứng hạt Ban ngày & Ban đêm
+            function initParticles() {
+                const sunParticles = document.getElementById('sunParticles');
+                for (let i = 0; i < 25; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'sun-particle';
+                    const size = Math.random() * 6 + 3;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.left = Math.random() * 100 + 'vw';
+                    p.style.top = (100 + Math.random() * 20) + 'vh';
+                    p.style.setProperty('--duration', (Math.random() * 6 + 6) + 's');
+                    p.style.setProperty('--delay', (Math.random() * 5) + 's');
+                    p.style.setProperty('--drift', (Math.random() * 80 - 40) + 'px');
+                    sunParticles.appendChild(p);
                 }
 
-                // Stars
                 const starsList = document.getElementById('starsList');
-                if (starsList) {
-                    starsList.innerHTML = '';
-                    for (let i = 0; i < 60; i++) {
-                        const star = document.createElement('div');
-                        star.className = 'star';
-                        const size = Math.random() * 3 + 1;
-                        star.style.width = size + 'px';
-                        star.style.height = size + 'px';
-                        star.style.top = Math.random() * 100 + '%';
-                        star.style.left = Math.random() * 100 + '%';
-                        star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
-                        star.style.setProperty('--delay', (Math.random() * 3) + 's');
-                        starsList.appendChild(star);
-                    }
+                for (let i = 0; i < 80; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    const size = Math.random() * 3 + 1;
+                    star.style.width = size + 'px';
+                    star.style.height = size + 'px';
+                    star.style.left = Math.random() * 100 + 'vw';
+                    star.style.top = Math.random() * 100 + 'vh';
+                    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                    star.style.setProperty('--delay', (Math.random() * 3) + 's');
+                    starsList.appendChild(star);
                 }
 
-                // Shooting Stars
                 const shootingStarsList = document.getElementById('shootingStarsList');
-                if (shootingStarsList) {
-                    shootingStarsList.innerHTML = '';
-                    for (let i = 0; i < 4; i++) {
-                        const sStar = document.createElement('div');
-                        sStar.className = 'shooting-star';
-                        sStar.style.top = (Math.random() * 50) + '%';
-                        sStar.style.right = (Math.random() * 20) + '%';
-                        sStar.style.setProperty('--speed', (Math.random() * 2 + 2) + 's');
-                        sStar.style.setProperty('--delay', (Math.random() * 6 + i * 2) + 's');
-                        shootingStarsList.appendChild(sStar);
-                    }
+                for (let i = 0; i < 4; i++) {
+                    const s = document.createElement('div');
+                    s.className = 'shooting-star';
+                    s.style.top = (Math.random() * 50) + '%';
+                    s.style.right = (Math.random() * 30) + '%';
+                    s.style.setProperty('--speed', (Math.random() * 2 + 3) + 's');
+                    s.style.setProperty('--delay', (Math.random() * 8 + i * 2) + 's');
+                    shootingStarsList.appendChild(s);
                 }
             }
 
-            function updateUI() {
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
+            function toggleTheme() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                updateThemeUI(isDark);
+            }
 
-                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
-                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
-                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
-                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
+            function updateThemeUI(isDark) {
+                const icon = document.getElementById('themeIcon');
+                const text = document.getElementById('themeText');
+                const badge = document.getElementById('skyBadge');
+                const headline = document.getElementById('subHeadline');
 
-                // Update SVG preview
-                const sepal = document.getElementById('svgSepal');
-                const sepal2 = document.getElementById('svgSepal2');
-                const petal = document.getElementById('svgPetal');
-
-                if (sepal && sepal2 && petal) {
-                    sepal.setAttribute('rx', (sw * 5).toFixed(0));
-                    sepal.setAttribute('ry', (sl * 5).toFixed(0));
-                    sepal2.setAttribute('rx', (sl * 5).toFixed(0));
-                    sepal2.setAttribute('ry', (sw * 5).toFixed(0));
-                    petal.setAttribute('r', (pl * 4).toFixed(0));
-                }
-
-                // Check unusual values
-                const warningBox = document.getElementById('warningBox');
-                const warningText = document.getElementById('warningText');
-                if (sl < sw || pl < pw) {
-                    warningText.innerText = 'Tỷ lệ kích thước có sự chênh lệch hiếm gặp trong tự nhiên (chiều rộng lớn hơn chiều dài).';
-                    warningBox.classList.remove('hidden');
+                if (isDark) {
+                    icon.innerText = '🌌';
+                    text.innerText = 'Đêm';
+                    badge.innerHTML = '🌌 Bầu trời tinh tú';
+                    headline.innerText = 'Như ngàn vì sao hội tụ soi sáng phân tích';
                 } else {
-                    warningBox.classList.add('hidden');
+                    icon.innerText = '🌅';
+                    text.innerText = 'Ngày';
+                    badge.innerHTML = '🌅 Ánh bình minh';
+                    headline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
                 }
             }
 
@@ -612,103 +588,114 @@ def home():
                 updateUI();
             }
 
-            function toggleTheme() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                const themeIcon = document.getElementById('themeIcon');
-                const themeText = document.getElementById('themeText');
-                const skyBadge = document.getElementById('skyBadge');
-                const subHeadline = document.getElementById('subHeadline');
-
-                if (isDark) {
-                    themeIcon.innerText = '✨';
-                    themeText.innerText = 'Đêm';
-                    skyBadge.innerHTML = '✨ Bầu trời tinh tú';
-                    subHeadline.innerText = 'Như ngàn vì sao lung linh thắp sáng mô hình trí tuệ nhân tạo';
-                } else {
-                    themeIcon.innerText = '🌅';
-                    themeText.innerText = 'Ban Mai';
-                    skyBadge.innerHTML = '🌅 Ánh bình minh';
-                    subHeadline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
-                }
-            }
-
-            async function submitForm(e) {
-                e.preventDefault();
+            function updateUI() {
                 const sl = parseFloat(document.getElementById('sepal_length').value);
                 const sw = parseFloat(document.getElementById('sepal_width').value);
                 const pl = parseFloat(document.getElementById('petal_length').value);
                 const pw = parseFloat(document.getElementById('petal_width').value);
 
+                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
+                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
+                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
+                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
+
+                // Cập nhật SVG
+                const svgSepal = document.getElementById('svgSepal');
+                const svgSepal2 = document.getElementById('svgSepal2');
+                const svgPetal = document.getElementById('svgPetal');
+
+                svgSepal.setAttribute('ry', Math.min(48, sl * 6));
+                svgSepal.setAttribute('rx', Math.min(30, sw * 5));
+                svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
+                svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
+                svgPetal.setAttribute('r', Math.min(30, (pl + pw) * 3));
+
+                // Kiểm tra cảnh báo sinh thái
+                const warningBox = document.getElementById('warningBox');
+                const warningText = document.getElementById('warningText');
+
+                if (pl < pw) {
+                    warningText.innerText = "Cánh hoa dài nhỏ hơn rộng - tỉ lệ khá hiếm trong tự nhiên.";
+                    warningBox.classList.remove('hidden');
+                } else if (sl < pl) {
+                    warningText.innerText = "Chiều dài đài hoa nhỏ hơn cánh hoa - hãy kiểm tra lại thông số đầu vào.";
+                    warningBox.classList.remove('hidden');
+                } else {
+                    warningBox.classList.add('hidden');
+                }
+            }
+
+            let historyData = [];
+
+            async function submitForm(event) {
+                event.preventDefault();
+                const data = {
+                    sepal_length: parseFloat(document.getElementById('sepal_length').value),
+                    sepal_width: parseFloat(document.getElementById('sepal_width').value),
+                    petal_length: parseFloat(document.getElementById('petal_length').value),
+                    petal_width: parseFloat(document.getElementById('petal_width').value)
+                };
+
                 try {
                     const res = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            sepal_length: sl,
-                            sepal_width: sw,
-                            petal_length: pl,
-                            petal_width: pw
-                        })
+                        body: JSON.stringify(data)
                     });
-                    const data = await res.json();
+                    const result = await res.json();
 
-                    // Update UI elements
-                    document.getElementById('resultIcon').innerText = data.icon;
-                    document.getElementById('resultName').innerText = data.prediction;
-                    document.getElementById('resultName').style.color = data.color;
-                    document.getElementById('resultDesc').innerText = data.desc;
-
-                    document.getElementById('careTipsText').innerText = data.care_tips;
+                    document.getElementById('resultIcon').innerText = result.icon;
+                    document.getElementById('resultName').innerText = result.prediction;
+                    document.getElementById('resultDesc').innerText = result.desc;
+                    document.getElementById('careTipsText').innerText = result.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
-                    // Probability Bars
+                    const probs = result.probabilities;
                     document.getElementById('probBars').classList.remove('hidden');
-                    const probs = data.probabilities;
+
                     for (let i = 0; i < 3; i++) {
                         const pct = (probs[i] * 100).toFixed(1) + '%';
                         document.getElementById('prob' + i).innerText = pct;
                         document.getElementById('bar' + i).style.width = pct;
                     }
 
-                    // Trigger Confetti
-                    confetti({
-                        particleCount: 50,
-                        spread: 60,
-                        origin: { y: 0.7 }
-                    });
+                    confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
 
-                    // Add entry to history table
-                    addToHistory(data.prediction, sl, sw, pl, pw);
+                    // Thêm vào Lịch sử
+                    const maxProb = Math.max(...probs);
+                    const historyItem = {
+                        name: result.prediction,
+                        icon: result.icon,
+                        color: result.color,
+                        sepal: `${data.sepal_length}x${data.sepal_width}`,
+                        petal: `${data.petal_length}x${data.petal_width}`,
+                        confidence: (maxProb * 100).toFixed(1) + '%'
+                    };
+
+                    historyData.unshift(historyItem);
+                    if (historyData.length > 10) historyData.pop();
+                    renderHistory();
 
                 } catch (err) {
-                    alert('Đã xảy ra lỗi khi kết nối tới máy chủ dự đoán!');
+                    console.error("Lỗi phân tích:", err);
                 }
             }
 
-            function addToHistory(name, sl, sw, pl, pw) {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                historyData.unshift({ name, sl, sw, pl, pw, time: timeStr });
-                renderHistory();
-            }
-
             function renderHistory() {
-                const tbody = document.getElementById('historyTableBody');
-                if (!historyData || historyData.length === 0) {
-                    tbody.innerHTML = `
-                        <tr id="emptyHistoryRow">
-                            <td colspan="4" class="text-amber-900/50 dark:text-slate-500 text-center py-4 italic">Chưa có lượt phân tích nào</td>
-                        </tr>`;
+                const tbody = document.getElementById('historyList');
+                if (historyData.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="py-3 text-center text-slate-400 italic">Chưa có lịch sử phân tích</td></tr>';
                     return;
                 }
 
                 tbody.innerHTML = historyData.map(item => `
-                    <tr class="hover:bg-amber-500/5 dark:hover:bg-slate-800/40 transition-colors">
-                        <td class="py-2 font-bold text-amber-900 dark:text-slate-200">${item.name}</td>
-                        <td class="py-2">${item.sl} x ${item.sw}</td>
-                        <td class="py-2">${item.pl} x ${item.pw}</td>
-                        <td class="py-2 text-right text-[11px] text-slate-500 dark:text-slate-400">${item.time}</td>
+                    <tr class="hover:bg-amber-500/5 dark:hover:bg-slate-800/40 transition">
+                        <td class="py-2 font-bold flex items-center gap-1.5" style="color: ${item.color}">
+                            <span>${item.icon}</span> ${item.name.replace('Iris-', '')}
+                        </td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.sepal}</td>
+                        <td class="py-2 text-slate-600 dark:text-slate-400">${item.petal}</td>
+                        <td class="py-2 text-right font-bold text-amber-700 dark:text-indigo-400">${item.confidence}</td>
                     </tr>
                 `).join('');
             }
@@ -718,9 +705,12 @@ def home():
                 renderHistory();
             }
 
-            window.onload = function() {
-                initEffects();
+            // Khởi tạo ban đầu
+            window.onload = () => {
+                initParticles();
+                updateThemeUI(false);
                 updateUI();
+                renderHistory();
             };
         </script>
     </body>
