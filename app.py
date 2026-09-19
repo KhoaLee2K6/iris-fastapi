@@ -578,7 +578,7 @@ def home():
                 if (html.classList.contains('dark')) {
                     html.classList.remove('dark');
                     skyBadge.innerHTML = '<span class="sun-icon-glow">🌅</span> Ánh bình minh';
-                    subHeadline.innerText = 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
+                    subHeadline.innerText = 'Như tia nắng đầu ngày, mở ra thế giới rực rỡ của muôn sắc hoa';
                     themeIcon.innerHTML = '🌅';
                     themeIcon.className = 'sun-icon-glow';
                     themeText.innerText = 'Ban ngày';
