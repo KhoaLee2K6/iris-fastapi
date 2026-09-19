@@ -121,12 +121,10 @@ def home():
             }
         </script>
         <style>
-            /* GIAO DIỆN BAN MAI: Ánh bình minh rực rỡ */
             body {
                 background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 35%, #fed7aa 70%, #fef3c7 100%);
                 background-attachment: fixed;
             }
-            /* GIAO DIỆN BAN ĐÊM: Bầu trời tinh tú đầy sao */
             .dark body {
                 background: linear-gradient(135deg, #030712 0%, #0b132b 40%, #1c2541 100%);
                 background-attachment: fixed;
@@ -149,7 +147,6 @@ def home():
                 border-radius: 9999px;
             }
 
-            /* --- BAN MAI: NẮNG CHIẾU & HẠT SÁNG --- */
             .sunlight-container { display: block; }
             .dark .sunlight-container { display: none; }
 
@@ -203,7 +200,6 @@ def home():
                 100% { transform: translateY(-110vh) translateX(var(--drift, 40px)) scale(1.3); opacity: 0; }
             }
 
-            /* --- BAN ĐÊM: BẦU TRỜI TINH TÚ & SAO BĂNG --- */
             .stars-container { display: none; }
             .dark .stars-container { display: block; }
             
@@ -218,7 +214,6 @@ def home():
                 50% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 10px rgba(255, 255, 255, 1); }
             }
 
-            /* Sao băng rơi rực rỡ */
             .shooting-star {
                 position: absolute;
                 height: 2px;
@@ -242,7 +237,7 @@ def home():
     </head>
     <body class="text-slate-800 dark:text-slate-100 font-sans min-h-screen p-4 md:p-8 transition-colors duration-500 overflow-x-hidden">
         
-        <!-- HIỆU ỨNG GIAO DIỆN BAN MAI (Tia nắng chiếu vào) -->
+        <!-- HIỆU ỨNG GIAO DIỆN BAN MAI -->
         <div id="sunlight" class="sunlight-container fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div class="sun-core"></div>
             <div class="sun-ray"></div>
@@ -251,7 +246,7 @@ def home():
             <div id="sunParticles"></div>
         </div>
 
-        <!-- HIỆU ỨNG GIAO DIỆN BAN ĐÊM (Bầu trời tinh tú & Sao băng) -->
+        <!-- HIỆU ỨNG GIAO DIỆN BAN ĐÊM -->
         <div id="stars" class="stars-container fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div id="starsList"></div>
             <div id="shootingStarsList"></div>
@@ -423,11 +418,26 @@ def home():
                                 </div>
                             </div>
                             <div class="space-y-1">
-                                <div class="flex justify-between text-xs"><span>Iris-virginica</span><span id="prob2" class="text-amber-600 dark:text-sky-400 font-bold">0%</span></div>
+                                <div class="flex justify-between text-xs"><span>Iris-virginica</span><span id="prob2" class="text-sky-600 dark:text-sky-400 font-bold">0%</span></div>
                                 <div class="w-full bg-amber-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
-                                    <div id="bar2" class="bg-amber-500 h-full w-0 transition-all duration-500 rounded-full"></div>
+                                    <div id="bar2" class="bg-sky-500 h-full w-0 transition-all duration-500 rounded-full"></div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- HISTORY CARD (MỚI THÊM NÚT XÓA LỊCH SỬ) -->
+                    <div class="nature-card p-5 rounded-3xl space-y-3">
+                        <div class="flex justify-between items-center border-b border-amber-200/60 dark:border-slate-800 pb-2">
+                            <h3 class="text-xs font-semibold text-amber-900 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                                <span>📜</span> Lịch Sử Phân Tích
+                            </h3>
+                            <button type="button" onclick="clearHistory()" class="text-[11px] text-rose-500 hover:text-rose-600 dark:text-rose-400 font-medium px-2 py-0.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition">
+                                🗑️ Xóa lịch sử
+                            </button>
+                        </div>
+                        <div id="historyList" class="space-y-2 max-h-40 overflow-y-auto text-xs pr-1">
+                            <p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>
                         </div>
                     </div>
                 </div>
@@ -467,7 +477,7 @@ def home():
                                 <td>1.0 - 1.8 cm</td>
                             </tr>
                             <tr>
-                                <td class="py-2.5 font-bold text-amber-600 dark:text-sky-400">Virginica</td>
+                                <td class="py-2.5 font-bold text-sky-600 dark:text-sky-400">Virginica</td>
                                 <td>4.9 - 7.9 cm</td>
                                 <td>2.2 - 3.8 cm</td>
                                 <td>4.5 - 6.9 cm</td>
@@ -481,9 +491,8 @@ def home():
         </div>
 
         <script>
-            // Khởi tạo các hiệu ứng tĩnh (Hạt nắng, Tinh tú, Sao băng)
+            // Khởi tạo các hiệu ứng tĩnh
             function initEffects() {
-                // 1. Tạo hạt bụi nắng cho Ban Mai
                 const sunParticlesContainer = document.getElementById('sunParticles');
                 for (let i = 0; i < 25; i++) {
                     const particle = document.createElement('div');
@@ -499,53 +508,41 @@ def home():
                     sunParticlesContainer.appendChild(particle);
                 }
 
-                // 2. Tạo vì tinh tú cho Bầu Trời Đêm
                 const starsList = document.getElementById('starsList');
-                for (let i = 0; i < 120; i++) {
+                for (let i = 0; i < 100; i++) {
                     const star = document.createElement('div');
                     star.className = 'star';
-                    const size = Math.random() * 3 + 1;
+                    const size = Math.random() * 2 + 1;
                     star.style.width = size + 'px';
                     star.style.height = size + 'px';
                     star.style.top = Math.random() * 100 + 'vh';
                     star.style.left = Math.random() * 100 + 'vw';
-                    star.style.setProperty('--duration', (Math.random() * 4 + 2) + 's');
-                    star.style.setProperty('--delay', (Math.random() * 4) + 's');
+                    star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                    star.style.setProperty('--delay', (Math.random() * 3) + 's');
                     starsList.appendChild(star);
                 }
 
-                // 3. Tạo sao băng cho Bầu Trời Đêm
                 const shootingStarsList = document.getElementById('shootingStarsList');
-                for (let i = 0; i < 6; i++) {
-                    const shootingStar = document.createElement('div');
-                    shootingStar.className = 'shooting-star';
-                    shootingStar.style.top = (Math.random() * 60) + 'vh';
-                    shootingStar.style.right = (Math.random() * 30) + 'vw';
-                    shootingStar.style.setProperty('--speed', (Math.random() * 3 + 3) + 's');
-                    shootingStar.style.setProperty('--delay', (Math.random() * 7) + 's');
-                    shootingStarsList.appendChild(shootingStar);
+                for (let i = 0; i < 4; i++) {
+                    const sStar = document.createElement('div');
+                    sStar.className = 'shooting-star';
+                    sStar.style.top = (Math.random() * 40) + 'vh';
+                    sStar.style.left = (Math.random() * 50 + 40) + 'vw';
+                    sStar.style.setProperty('--speed', (Math.random() * 2 + 2.5) + 's');
+                    sStar.style.setProperty('--delay', (Math.random() * 6) + 's');
+                    shootingStarsList.appendChild(sStar);
                 }
             }
 
-            // Chuyển đổi giao diện Ban Mai / Ban Đêm
             function toggleTheme() {
-                const isDark = document.documentElement.classList.toggle('dark');
-                const themeIcon = document.getElementById('themeIcon');
-                const themeText = document.getElementById('themeText');
-                const skyBadge = document.getElementById('skyBadge');
-                const subHeadline = document.getElementById('subHeadline');
-
-                if (isDark) {
-                    themeIcon.innerText = "🌙";
-                    themeText.innerText = "Bầu Trời Tinh Tú";
-                    skyBadge.innerHTML = "🌙 Bầu trời tinh tú";
-                    subHeadline.innerText = "Như một vì tinh tú lấp lánh cùng sao băng đêm";
-                } else {
-                    themeIcon.innerText = "🌅";
-                    themeText.innerText = "Ban Mai";
-                    skyBadge.innerHTML = "🌅 Ánh bình minh";
-                    subHeadline.innerText = "Như tia nắng ban mai chiếu qua không gian nhận diện hoa";
-                }
+                const html = document.documentElement;
+                const isDark = html.classList.toggle('dark');
+                document.getElementById('themeIcon').textContent = isDark ? '🌙' : '🌅';
+                document.getElementById('themeText').textContent = isDark ? 'Đêm Tinh Tú' : 'Ban Mai';
+                document.getElementById('skyBadge').innerHTML = isDark ? '🌙 Bầu trời tinh tú' : '🌅 Ánh bình minh';
+                document.getElementById('subHeadline').textContent = isDark 
+                    ? 'Như bầu trời đêm chiếu sáng từng đường nét dịu kỳ' 
+                    : 'Như tia nắng ban mai chiếu qua không gian nhận diện hoa';
             }
 
             function adjustValue(id, delta) {
@@ -556,44 +553,6 @@ def home():
                 updateUI();
             }
 
-            function updateUI() {
-                const sl = parseFloat(document.getElementById('sepal_length').value);
-                const sw = parseFloat(document.getElementById('sepal_width').value);
-                const pl = parseFloat(document.getElementById('petal_length').value);
-                const pw = parseFloat(document.getElementById('petal_width').value);
-
-                document.getElementById('sl_val').innerText = sl.toFixed(1) + ' cm';
-                document.getElementById('sw_val').innerText = sw.toFixed(1) + ' cm';
-                document.getElementById('pl_val').innerText = pl.toFixed(1) + ' cm';
-                document.getElementById('pw_val').innerText = pw.toFixed(1) + ' cm';
-
-                // Cập nhật SVG mô phỏng
-                const svgSepal = document.getElementById('svgSepal');
-                const svgSepal2 = document.getElementById('svgSepal2');
-                const svgPetal = document.getElementById('svgPetal');
-
-                if (svgSepal) {
-                    svgSepal.setAttribute('ry', Math.min(48, sl * 6));
-                    svgSepal.setAttribute('rx', Math.min(30, sw * 5));
-                    svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
-                    svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
-                    svgPetal.setAttribute('r', Math.min(35, Math.max(8, pl * 4.5)));
-                }
-
-                // Cảnh báo chỉ số bất thường
-                const warningBox = document.getElementById('warningBox');
-                const warningText = document.getElementById('warningText');
-                if (pl < pw) {
-                    warningText.innerText = 'Tỷ lệ cánh hoa bất thường: Chiều dài nhỏ hơn chiều rộng.';
-                    warningBox.classList.remove('hidden');
-                } else if (sl < pl) {
-                    warningText.innerText = 'Cánh hoa dài hơn đài hoa khá nhiều, thuộc dạng đột biến nhẹ.';
-                    warningBox.classList.remove('hidden');
-                } else {
-                    warningBox.classList.add('hidden');
-                }
-            }
-
             function applyPreset(sl, sw, pl, pw) {
                 document.getElementById('sepal_length').value = sl;
                 document.getElementById('sepal_width').value = sw;
@@ -602,9 +561,45 @@ def home():
                 updateUI();
             }
 
+            function updateUI() {
+                const sl = parseFloat(document.getElementById('sepal_length').value);
+                const sw = parseFloat(document.getElementById('sepal_width').value);
+                const pl = parseFloat(document.getElementById('petal_length').value);
+                const pw = parseFloat(document.getElementById('petal_width').value);
+
+                document.getElementById('sl_val').textContent = sl.toFixed(1) + ' cm';
+                document.getElementById('sw_val').textContent = sw.toFixed(1) + ' cm';
+                document.getElementById('pl_val').textContent = pl.toFixed(1) + ' cm';
+                document.getElementById('pw_val').textContent = pw.toFixed(1) + ' cm';
+
+                // SVG update
+                const svgSepal = document.getElementById('svgSepal');
+                const svgSepal2 = document.getElementById('svgSepal2');
+                const svgPetal = document.getElementById('svgPetal');
+
+                svgSepal.setAttribute('ry', Math.min(48, sl * 6));
+                svgSepal.setAttribute('rx', Math.min(30, sw * 5));
+                svgSepal2.setAttribute('rx', Math.min(48, sl * 6));
+                svgSepal2.setAttribute('ry', Math.min(30, sw * 5));
+                svgPetal.setAttribute('r', Math.min(25, (pl + pw) * 3));
+
+                // Warning checks
+                const warningBox = document.getElementById('warningBox');
+                const warningText = document.getElementById('warningText');
+                if (pl < pw) {
+                    warningBox.classList.remove('hidden');
+                    warningText.textContent = 'Chiều dài cánh hoa ngắn hơn chiều rộng trong tự nhiên là rất hiếm!';
+                } else if (sl < pl) {
+                    warningBox.classList.remove('hidden');
+                    warningText.textContent = 'Đài hoa thường dài hơn cánh hoa ở mẫu hoa chuẩn sinh thái.';
+                } else {
+                    warningBox.classList.add('hidden');
+                }
+            }
+
             async function submitForm(e) {
                 e.preventDefault();
-                const payload = {
+                const data = {
                     sepal_length: parseFloat(document.getElementById('sepal_length').value),
                     sepal_width: parseFloat(document.getElementById('sepal_width').value),
                     petal_length: parseFloat(document.getElementById('petal_length').value),
@@ -615,47 +610,78 @@ def home():
                     const res = await fetch('/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        body: JSON.stringify(data)
                     });
-                    const data = await res.json();
+                    const result = await res.json();
 
-                    document.getElementById('resultIcon').innerText = data.icon;
-                    document.getElementById('resultName').innerText = data.prediction;
-                    document.getElementById('resultName').style.color = data.color;
-                    document.getElementById('resultDesc').innerText = data.desc;
+                    document.getElementById('resultIcon').textContent = result.icon;
+                    document.getElementById('resultName').textContent = result.prediction;
+                    document.getElementById('resultName').style.color = result.color;
+                    document.getElementById('resultDesc').textContent = result.desc;
 
-                    document.getElementById('careTipsText').innerText = data.care_tips;
+                    document.getElementById('careTipsText').textContent = result.care_tips;
                     document.getElementById('careBox').classList.remove('hidden');
 
-                    const probs = data.probabilities;
-                    document.getElementById('prob0').innerText = Math.round(probs[0] * 100) + '%';
-                    document.getElementById('prob1').innerText = Math.round(probs[1] * 100) + '%';
-                    document.getElementById('prob2').innerText = Math.round(probs[2] * 100) + '%';
-
-                    document.getElementById('bar0').style.width = (probs[0] * 100) + '%';
-                    document.getElementById('bar1').style.width = (probs[1] * 100) + '%';
-                    document.getElementById('bar2').style.width = (probs[2] * 100) + '%';
-
+                    const probs = result.probabilities;
                     document.getElementById('probBars').classList.remove('hidden');
 
-                    // Bắn pháo hoa Confetti chúc mừng
-                    if (typeof confetti === 'function') {
-                        confetti({
-                            particleCount: 65,
-                            spread: 70,
-                            origin: { y: 0.6 }
-                        });
+                    for (let i = 0; i < 3; i++) {
+                        const pct = Math.round(probs[i] * 100);
+                        document.getElementById(`prob${i}`).textContent = `${pct}%`;
+                        document.getElementById(`bar${i}`).style.width = `${pct}%`;
                     }
+
+                    confetti({
+                        particleCount: 40,
+                        spread: 60,
+                        origin: { y: 0.8 }
+                    });
+
+                    // Lưu lịch sử
+                    addHistoryItem(result.prediction, result.icon, result.color);
+
                 } catch (err) {
-                    console.error('Lỗi phân tích:', err);
+                    alert('Đã xảy ra lỗi khi kết nối tới máy chủ!');
                 }
             }
 
-            // Gọi hàm tạo hiệu ứng khi tải trang
-            window.addEventListener('DOMContentLoaded', () => {
+            // Quản lý lịch sử phân tích
+            function addHistoryItem(name, icon, color) {
+                const history = JSON.parse(localStorage.getItem('iris_history') || '[]');
+                const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                history.unshift({ name, icon, color, time });
+                if (history.length > 5) history.pop();
+                localStorage.setItem('iris_history', JSON.stringify(history));
+                renderHistory();
+            }
+
+            function renderHistory() {
+                const history = JSON.parse(localStorage.getItem('iris_history') || '[]');
+                const container = document.getElementById('historyList');
+                if (history.length === 0) {
+                    container.innerHTML = '<p id="emptyHistory" class="text-amber-900/50 dark:text-slate-500 text-center py-2 italic">Chưa có lượt phân tích nào</p>';
+                    return;
+                }
+                container.innerHTML = history.map(item => `
+                    <div class="flex justify-between items-center p-2 bg-white/60 dark:bg-slate-900/50 rounded-xl border border-amber-100 dark:border-slate-800">
+                        <span class="font-medium flex items-center gap-1.5" style="color: ${item.color}">
+                            <span>${item.icon}</span> ${item.name}
+                        </span>
+                        <span class="text-[10px] text-slate-400 font-mono">${item.time}</span>
+                    </div>
+                `).join('');
+            }
+
+            function clearHistory() {
+                localStorage.removeItem('iris_history');
+                renderHistory();
+            }
+
+            window.onload = () => {
                 initEffects();
                 updateUI();
-            });
+                renderHistory();
+            };
         </script>
     </body>
     </html>
