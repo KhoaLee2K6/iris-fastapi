@@ -456,7 +456,7 @@ def home():
                         <div class="space-y-1">
                             <div id="resultIcon" class="text-5xl mb-2 animate-bounce inline-block">🌅</div>
                             <h3 id="resultName" class="text-2xl font-bold font-serif text-amber-950 dark:text-slate-100">Sẵn Sàng Khám Phá</h3>
-                            <p id="resultDesc" class="text-xs text-amber-900/70 dark:text-slate-400">Điều chỉnh thông số và bấm để lắng nghe kết quả</p>
+                            <p id="resultDesc" class="text-xs text-amber-900/70 dark:text-slate-400">Điều chỉnh thông số và bấm để xem kết quả</p>
                         </div>
 
                         <div id="careBox" class="hidden p-4 bg-white/80 dark:bg-slate-900/80 border border-amber-200 dark:border-indigo-900/40 rounded-2xl text-left text-xs text-slate-700 dark:text-slate-300 space-y-2">
