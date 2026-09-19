@@ -585,7 +585,7 @@ def home():
                 } else {
                     html.classList.add('dark');
                     skyBadge.innerHTML = '<span class="star-sparkle">✨</span> Bầu trời tinh tú';
-                    subHeadline.innerText = 'Ánh sáng lung linh từ vũ trụ chiêm ngưỡng sắc hoa Iris';
+                    subHeadline.innerText = 'Ánh sáng lung linh từ ngàn vì sao thắp sáng bầu trời đêm';
                     themeIcon.innerHTML = '✨';
                     themeIcon.className = 'star-sparkle';
                     themeText.innerText = 'Ban đêm';
